@@ -1,0 +1,399 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Haiku Runner</title>
+<style>
+:root{
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  --bg:#0b0f14;
+  --panel:#0f1620;
+  --panel2:#0b111a;
+  --border:#1a2430;
+  --border2:#223142;
+  --text:#e8eef6;
+  --muted:#9bb0c7;
+  --primary:#1c6ff2;
+}
+*{ box-sizing:border-box; }
+body{ margin:0; background:var(--bg); color:var(--text); }
+
+header{
+  height:56px;
+  padding:0 16px;
+  border-bottom:1px solid var(--border);
+  background:var(--bg);
+  position:sticky;
+  top:0;
+  z-index:30;
+  display:flex;
+  align-items:center;
+}
+header h1{
+  margin:0;
+  font-size:18px;
+  line-height:1;
+}
+
+.keypadBar{
+  position:fixed;
+  top:56px;
+  left:0;
+  right:0;
+  background:var(--panel);
+  border-bottom:1px solid var(--border);
+  z-index:20;
+}
+.keypadInner{
+  max-width:400px;
+  margin:0 auto;
+  padding:10px 10px 8px;
+}
+
+.topRow{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  color:var(--muted);
+  font-size:13px;
+  margin-bottom:8px;
+}
+
+.display{
+  text-align:center;
+  font-size:20px;
+  font-weight:800;
+  min-height:24px;
+}
+
+.keypadRow{
+  display:grid;
+  grid-template-columns:repeat(7, minmax(0,1fr));
+  gap:6px;
+  margin-top:8px;
+}
+
+.keypadRow button{
+  width:100%;
+  min-width:0;
+  padding:12px 0;
+  font-size:17px;
+  border-radius:10px;
+  border:1px solid var(--border2);
+  background:#101823;
+  color:var(--text);
+  cursor:pointer;
+  touch-action:manipulation;
+}
+
+.keypadRow button.primary{
+  background:var(--primary);
+  border-color:var(--primary);
+}
+
+.statusLine{
+  margin-top:10px;
+  padding-top:8px;
+  border-top:1px solid var(--border);
+  font-size:14px;
+  color:var(--muted);
+  text-align:center;
+  line-height:1.3;
+}
+
+.wrap{
+  max-width:400px;
+  margin:0 auto;
+  padding:220px 12px 40px;
+}
+
+.card{
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:12px;
+  margin-top:12px;
+}
+
+.title{
+  font-size:24px;
+  font-weight:900;
+  text-align:center;
+  word-break:break-word;
+}
+
+.line{
+  padding:12px;
+  margin-top:8px;
+  border-radius:14px;
+  border:1px solid var(--border);
+  background:var(--panel2);
+  font-size:20px;
+  text-align:center;
+  line-height:1.25;
+}
+
+.logTitle{
+  color:var(--muted);
+  font-size:13px;
+  text-transform:uppercase;
+  letter-spacing:.06em;
+  margin-bottom:8px;
+}
+
+.logList{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+
+.logItem{
+  border:1px solid var(--border);
+  background:var(--panel2);
+  border-radius:12px;
+  padding:10px 12px;
+}
+
+.logMain{
+  font-size:16px;
+  font-weight:700;
+}
+
+.logSub{
+  color:var(--muted);
+  font-size:13px;
+  margin-top:2px;
+}
+
+.empty{
+  color:var(--muted);
+  font-size:14px;
+  text-align:center;
+  padding:10px 0;
+}
+
+@media (max-width: 400px){
+  .keypadInner{ padding:8px 8px 6px; }
+  .keypadRow{ gap:5px; }
+  .keypadRow button{ padding:11px 0; font-size:16px; }
+  .display{ font-size:18px; }
+  .statusLine{ font-size:13px; }
+  .title{ font-size:22px; }
+  .line{ font-size:18px; }
+  .wrap{ padding-top:214px; }
+}
+</style>
+</head>
+<body>
+
+<header><h1>Haiku Runner</h1></header>
+
+<div class="keypadBar">
+  <div class="keypadInner">
+    <div class="topRow">
+      <div id="holeShotPill">Hole 1 • Shot 1</div>
+      <div>Auto-hole: +80</div>
+    </div>
+
+    <div class="display" id="display">Enter yards</div>
+
+    <div class="keypadRow" id="keypad">
+      <button data-k="1">1</button>
+      <button data-k="2">2</button>
+      <button data-k="3">3</button>
+      <button data-k="4">4</button>
+      <button data-k="5">5</button>
+      <button data-k="6">6</button>
+      <button data-k="7">7</button>
+
+      <button data-k="8">8</button>
+      <button data-k="9">9</button>
+      <button data-k="0">0</button>
+      <button data-k="⌫">⌫</button>
+      <button data-k="C">C</button>
+      <button class="primary" id="ok">OK</button>
+    </div>
+
+    <div class="statusLine" id="statusText">Hole 1 • Shot 1 • Yards — • Club —</div>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="card">
+    <div class="title" id="title">Aim —</div>
+  </div>
+
+  <div class="card" id="haiku"></div>
+
+  <div class="card">
+    <div class="logTitle" id="logTitle">SHOT LOG (0 shots)</div>
+    <div id="shotLog" class="logList">
+      <div class="empty">No shots logged yet.</div>
+    </div>
+  </div>
+</div>
+
+<script>
+const CARRY = [
+  { code:"D", carry:245, label:"D" },
+  { code:"3", carry:230, label:"3 wood" },
+  { code:"H", carry:205, label:"hybrid" },
+  { code:"4", carry:175, label:"4 iron" },
+  { code:"5", carry:165, label:"5 iron" },
+  { code:"6", carry:155, label:"6 iron" },
+  { code:"7", carry:145, label:"7 iron" },
+  { code:"8", carry:135, label:"8 iron" },
+  { code:"9", carry:120, label:"9 iron" },
+  { code:"P", carry:105, label:"pitching wedge" },
+  { code:"G", carry:95, label:"gap wedge" },
+  { code:"S", carry:75, label:"sand wedge" },
+  { code:"L", carry:65, label:"lob wedge" }
+];
+
+function chooseClub(y){
+  if (y <= 10) return { code:"putt", label:"putt" };
+  let best = CARRY[0];
+  let diff = Math.abs(y - best.carry);
+  for (const c of CARRY){
+    const d = Math.abs(y - c.carry);
+    if (d < diff){
+      best = c;
+      diff = d;
+    }
+  }
+  return best;
+}
+
+let lastCommitted = null; // { hole, shot, yards, club }
+let input = "";
+let shotLog = []; // newest first
+let totalShots = 0;
+
+function getBaseNextPosition(){
+  if (!lastCommitted) return { hole:1, shot:1 };
+  return { hole:lastCommitted.hole, shot:lastCommitted.shot + 1 };
+}
+
+function getProjectedPosition(yardsValue){
+  if (!lastCommitted) return { hole:1, shot:1 };
+  if (typeof yardsValue === "number" && Number.isFinite(yardsValue) && yardsValue > lastCommitted.yards + 80){
+    return { hole:lastCommitted.hole + 1, shot:1 };
+  }
+  return { hole:lastCommitted.hole, shot:lastCommitted.shot + 1 };
+}
+
+function renderLog(){
+  const title = document.getElementById("logTitle");
+  title.textContent = `SHOT LOG (${totalShots} shots)`;
+
+  const container = document.getElementById("shotLog");
+  container.innerHTML = "";
+
+  if (shotLog.length === 0){
+    const empty = document.createElement("div");
+    empty.className = "empty";
+    empty.textContent = "No shots logged yet.";
+    container.appendChild(empty);
+    return;
+  }
+
+  shotLog.forEach(entry => {
+    const item = document.createElement("div");
+    item.className = "logItem";
+
+    const main = document.createElement("div");
+    main.className = "logMain";
+    main.textContent = `Shot ${entry.shot} • ${entry.yards} yards • ${entry.club.label}`;
+
+    const sub = document.createElement("div");
+    sub.className = "logSub";
+    sub.textContent = `Hole ${entry.hole}`;
+
+    item.appendChild(main);
+    item.appendChild(sub);
+    container.appendChild(item);
+  });
+}
+
+function render(){
+  const parsedInput = input ? Number(input) : null;
+  const hasPreview = Number.isFinite(parsedInput) && parsedInput > 0;
+  const projected = hasPreview ? getProjectedPosition(parsedInput) : getBaseNextPosition();
+  const projectedClub = hasPreview ? chooseClub(parsedInput) : null;
+
+  document.getElementById("holeShotPill").textContent = `Hole ${projected.hole} • Shot ${projected.shot}`;
+  document.getElementById("display").textContent = input || "Enter yards";
+  document.getElementById("statusText").textContent =
+    `Hole ${projected.hole} • Shot ${projected.shot} • Yards ${hasPreview ? parsedInput : "—"} • Club ${projectedClub ? projectedClub.label : "—"}`;
+
+  document.getElementById("title").textContent = `Aim ${lastCommitted ? lastCommitted.club.label : "—"}`;
+
+  const lines = [
+    "clean exhale s.e.t.u.p.",
+    "extend tilt unlock posture",
+    "still 1 2 3 4"
+  ];
+
+  const h = document.getElementById("haiku");
+  h.innerHTML = "";
+  lines.forEach(t => {
+    const d = document.createElement("div");
+    d.className = "line";
+    d.textContent = t;
+    h.appendChild(d);
+  });
+
+  renderLog();
+}
+
+function commit(){
+  if (!input) return;
+  const y = Number(input);
+  if (!Number.isFinite(y) || y <= 0) return;
+
+  const commitPos = getProjectedPosition(y);
+  const club = chooseClub(y);
+
+  lastCommitted = {
+    hole: commitPos.hole,
+    shot: commitPos.shot,
+    yards: y,
+    club
+  };
+
+  shotLog.unshift({
+    hole: commitPos.hole,
+    shot: commitPos.shot,
+    yards: y,
+    club
+  });
+
+  totalShots += 1;
+
+  input = "";
+  render();
+}
+
+document.getElementById("ok").onclick = commit;
+
+document.getElementById("keypad").onclick = (e) => {
+  const btn = e.target.closest("button");
+  if (!btn) return;
+  if (btn.id === "ok") return;
+
+  const k = btn.getAttribute("data-k");
+  if (!k) return;
+
+  if (k === "C") input = "";
+  else if (k === "⌫") input = input.slice(0, -1);
+  else input += k;
+
+  render();
+};
+
+render();
+</script>
+</body>
+</html>
