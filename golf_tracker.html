@@ -17,27 +17,9 @@
   --primary:#1c6ff2;
 }
 *{ box-sizing:border-box; }
-html, body {
-  touch-action: manipulation;
-}
-
-button,
-input,
-select,
-textarea,
-a,
-.tabBtn,
-.logItem,
-.clearLink {
-  touch-action: manipulation;
-}
-
-
-input,
-select,
-textarea {
-  font-size:16px;
-}
+html, body { touch-action: manipulation; }
+button, input, select, textarea, a, .tabBtn, .logItem, .clearLink { touch-action: manipulation; }
+input, select, textarea { font-size:16px; }
 body{ margin:0; background:var(--bg); color:var(--text); }
 
 header{
@@ -132,6 +114,8 @@ button{
   font-size:16px;
 }
 .primary{ background:var(--primary); border-color:var(--primary); }
+.secondaryBtn{ background:#132030; }
+.dangerBtn{ background:#2a1520; border-color:#4a2232; }
 
 .statusLine{
   margin-top:10px;
@@ -140,7 +124,7 @@ button{
   font-size:14px;
   color:var(--muted);
   text-align:center;
-  line-height:1.3;
+  line-height:1.35;
   min-height:20px;
 }
 
@@ -165,6 +149,14 @@ button{
   background:var(--panel2);
   text-align:center;
 }
+.line.shedFade{
+  opacity:0;
+  animation:shedFade 900ms ease forwards;
+}
+@keyframes shedFade{
+  0%{ opacity:0; transform:translateY(4px); }
+  100%{ opacity:1; transform:translateY(0); }
+}
 
 .logItem{
   background:var(--panel2);
@@ -174,10 +166,11 @@ button{
   cursor:pointer;
   -webkit-tap-highlight-color: transparent;
   user-select:none;
+  border:1px solid transparent;
 }
 .logItem:active{
   transform:scale(.995);
-  border:1px solid var(--border2);
+  border-color:var(--border2);
 }
 .logMain{
   font-size:15px;
@@ -187,12 +180,6 @@ button{
   margin-top:6px;
   font-size:12px;
   color:var(--muted);
-}.secondaryBtn{
-  background:#132030;
-}
-.dangerBtn{
-  background:#2a1520;
-  border-color:#4a2232;
 }
 .editRow{
   display:flex;
@@ -207,7 +194,7 @@ button{
   border:1px solid var(--border2);
   background:#101823;
   color:var(--text);
-  font-size:15px;
+  font-size:16px;
 }
 .actionRow{
   display:grid;
@@ -289,7 +276,6 @@ button{
   min-height:16px;
 }
 
-
 .weatherBtn{
   width:42px;
   min-width:42px;
@@ -340,7 +326,9 @@ button{
   border:1px solid var(--border);
   border-radius:14px;
   padding:12px;
+  margin-top:10px;
 }
+.popoverSection:first-of-type{ margin-top:0; }
 .popoverLabel{
   font-size:14px;
   color:var(--muted);
@@ -371,15 +359,16 @@ button{
   text-align:center;
   line-height:1.35;
 }
-input[type="range"]{
-  width:100%;
+.conditionsSummary{
+  margin-top:8px;
+  color:var(--muted);
+  font-size:13px;
+  text-align:center;
+  line-height:1.35;
 }
-.popoverFooter{
-  margin-top:12px;
-}
-.popoverFooter button{
-  width:100%;
-}
+input[type="range"]{ width:100%; }
+.popoverFooter{ margin-top:12px; }
+.popoverFooter button{ width:100%; }
 
 @media (max-width:400px){
   .page{ padding:10px 10px 32px; }
@@ -427,6 +416,7 @@ input[type="range"]{
       </div>
 
       <div class="statusLine" id="statusText">Hole 1 • Shot 1 • Yards — • Club —</div>
+      <div class="conditionsSummary" id="conditionsSummary">Wind flat • Hole flat • Green flat</div>
       <div class="savedLine" id="savedText">Saved locally for this device and day.</div>
     </div>
   </div>
@@ -464,7 +454,6 @@ input[type="range"]{
   </div>
 </div>
 
-
 <div class="modalBackdrop hidden" id="weatherModal">
   <div class="popoverCard" role="dialog" aria-modal="true" aria-labelledby="weatherTitle">
     <div class="popoverHeader">
@@ -479,8 +468,28 @@ input[type="range"]{
         <input id="windSlider" type="range" min="-4" max="4" step="1" value="0" />
         <div class="sliderEdge">Hurting<br>4 clubs</div>
       </div>
-      <div class="sliderValue" id="windValue">No wind adjustment</div>
-      <div class="sliderHint">This changes the calculated playing distance used for club selection.</div>
+      <div class="sliderValue" id="windValue">Wind flat</div>
+    </div>
+
+    <div class="popoverSection">
+      <div class="popoverLabel">Hole</div>
+      <div class="sliderRow">
+        <div class="sliderEdge">Downhill<br>4 clubs</div>
+        <input id="holeSlider" type="range" min="-4" max="4" step="1" value="0" />
+        <div class="sliderEdge">Uphill<br>4 clubs</div>
+      </div>
+      <div class="sliderValue" id="holeValue">Hole flat</div>
+    </div>
+
+    <div class="popoverSection">
+      <div class="popoverLabel">Green</div>
+      <div class="sliderRow">
+        <div class="sliderEdge">Downhill<br>4 clubs</div>
+        <input id="greenSlider" type="range" min="-4" max="4" step="1" value="0" />
+        <div class="sliderEdge">Uphill<br>4 clubs</div>
+      </div>
+      <div class="sliderValue" id="greenValue">Green flat</div>
+      <div class="sliderHint">All 3 sliders feed the playing distance for full shots and putts.</div>
     </div>
 
     <div class="popoverFooter">
@@ -488,7 +497,6 @@ input[type="range"]{
     </div>
   </div>
 </div>
-
 
 <div class="modalBackdrop hidden" id="editShotModal">
   <div class="popoverCard" role="dialog" aria-modal="true" aria-labelledby="editShotTitle">
@@ -502,7 +510,6 @@ input[type="range"]{
       <div class="editRow">
         <input id="editShotInput" type="number" min="1" step="1" inputmode="numeric" placeholder="Enter yards" />
       </div>
-      <div class="sliderHint">Tap a shot to edit it. Delete is inside this popover.</div>
     </div>
 
     <div class="actionRow">
@@ -525,36 +532,21 @@ function club(y){
   if(y<=10) return "putt";
   let best=clubs[0];
   let diff=Math.abs(y-best[1]);
-  for(let c of clubs){
-    let d=Math.abs(y-c[1]);
-    if(d<diff){best=c; diff=d;}
+  for(const c of clubs){
+    const d=Math.abs(y-c[1]);
+    if(d<diff){ best=c; diff=d; }
   }
   return best[0];
 }
 
-function haiku(y){
-  if(y<=10){
-    return [
-      "Center. Expand. Sync.",
-      "Extend. Tilt. Unlock. Picture.",
-      "Still. 1 To, 1, 2."
-    ];
-  }
-  if(y<100){
-    return [
-      "Center. Expand. Sync.",
-      "Extend. Tilt. Unlock. Picture.",
-      "Still. Sawish, Swish, Hold"
-    ];
-  }
+function haiku(){
   return [
-    "Center. Expand. Stretch.",
-    "Extend. Tilt. Unlock. Picture.",
-    "Still. 1 2. 3. 4"
+    "Cue Address Roll Ease",
+    "Eye 1 2 3 4 1 2",
+    "Step Hum Exhale Doubt"
   ];
 }
 
-// ---------- Persistence ----------
 const DB="golfToolsDB";
 const ROUND_STORE="rounds";
 const SETTINGS_STORE="settings";
@@ -567,11 +559,15 @@ let shots=[];
 let activeTab="haiku";
 let liveUrlValue="";
 let windClubs=0;
+let holeClubs=0;
+let greenClubs=0;
 let draftWindClubs=0;
+let draftHoleClubs=0;
+let draftGreenClubs=0;
 let editingShotId="";
 let editInput="";
-let longPressTimer=null;
-let longPressFired=false;
+let animateShed=false;
+let animateShedTimer=null;
 
 function getDeviceId(){
   let id=localStorage.getItem("golfToolsDeviceId");
@@ -597,21 +593,8 @@ function roundState(){
   return { input, last, shots };
 }
 
-function makeShot(rawYards, shotWindClubs, pos){
-  const playYards=Math.max(1, Math.round(rawYards + shotWindClubs * CLUB_YARD_ADJUSTMENT));
-  return {
-    id:(crypto.randomUUID ? crypto.randomUUID() : 'shot-'+Date.now()+'-'+Math.random().toString(16).slice(2)),
-    hole:pos.hole,
-    shot:pos.shot,
-    yards:rawYards,
-    playYards,
-    club:club(playYards),
-    windClubs:shotWindClubs
-  };
-}
-
 function settingsState(){
-  return { activeTab, liveUrlValue, windClubs };
+  return { activeTab, liveUrlValue, windClubs, holeClubs, greenClubs };
 }
 
 function saveLocalFallback(){
@@ -625,12 +608,8 @@ function saveLocalFallback(){
 
 function loadLocalFallback(){
   let round=null, settings=null;
-  try{
-    round=JSON.parse(localStorage.getItem(localRoundKey()) || "null");
-  }catch(e){}
-  try{
-    settings=JSON.parse(localStorage.getItem(localSettingsKey()) || "null");
-  }catch(e){}
+  try{ round=JSON.parse(localStorage.getItem(localRoundKey()) || "null"); }catch(e){}
+  try{ settings=JSON.parse(localStorage.getItem(localSettingsKey()) || "null"); }catch(e){}
   return { round, settings };
 }
 
@@ -639,12 +618,8 @@ function openDB(){
     const req=indexedDB.open(DB,1);
     req.onupgradeneeded=e=>{
       const dbase=e.target.result;
-      if(!dbase.objectStoreNames.contains(ROUND_STORE)){
-        dbase.createObjectStore(ROUND_STORE,{keyPath:"id"});
-      }
-      if(!dbase.objectStoreNames.contains(SETTINGS_STORE)){
-        dbase.createObjectStore(SETTINGS_STORE,{keyPath:"id"});
-      }
+      if(!dbase.objectStoreNames.contains(ROUND_STORE)) dbase.createObjectStore(ROUND_STORE,{keyPath:"id"});
+      if(!dbase.objectStoreNames.contains(SETTINGS_STORE)) dbase.createObjectStore(SETTINGS_STORE,{keyPath:"id"});
     };
     req.onsuccess=()=>{ db=req.result; resolve(); };
     req.onerror=()=>reject(req.error);
@@ -704,16 +679,50 @@ function pulseSaved(){
   }, 1200);
 }
 
-// ---------- Haiku logic ----------
-function adjustedYards(y){
-  return Math.max(1, Math.round(y + windClubs * CLUB_YARD_ADJUSTMENT));
+function totalConditionClubs(w=windClubs, h=holeClubs, g=greenClubs){
+  return Number(w) + Number(h) + Number(g);
+}
+
+function adjustedYards(y, w=windClubs, h=holeClubs, g=greenClubs){
+  return Math.max(1, Math.round(y + totalConditionClubs(w,h,g) * CLUB_YARD_ADJUSTMENT));
+}
+
+function formatCondition(prefix, value, negativeLabel, positiveLabel){
+  if(value===0) return `${prefix} flat`;
+  const mag=Math.abs(value);
+  const noun=mag===1 ? "club" : "clubs";
+  return value < 0 ? `${prefix} ${mag} ${noun} ${negativeLabel}` : `${prefix} ${mag} ${noun} ${positiveLabel}`;
 }
 
 function windSummary(value=windClubs){
-  if(value===0) return "No wind adjustment";
-  const mag=Math.abs(value);
-  const noun=mag===1 ? "club" : "clubs";
-  return value < 0 ? `${mag} ${noun} helping` : `${mag} ${noun} hurting`;
+  return formatCondition("Wind", value, "helping", "hurting");
+}
+
+function holeSummary(value=holeClubs){
+  return formatCondition("Hole", value, "downhill", "uphill");
+}
+
+function greenSummary(value=greenClubs){
+  return formatCondition("Green", value, "downhill", "uphill");
+}
+
+function conditionsSummaryText(w=windClubs, h=holeClubs, g=greenClubs){
+  return `${windSummary(w)} • ${holeSummary(h)} • ${greenSummary(g)}`;
+}
+
+function makeShot(rawYards, shotConditions, pos){
+  const playYards=adjustedYards(rawYards, shotConditions.windClubs, shotConditions.holeClubs, shotConditions.greenClubs);
+  return {
+    id:(crypto.randomUUID ? crypto.randomUUID() : 'shot-'+Date.now()+'-'+Math.random().toString(16).slice(2)),
+    hole:pos.hole,
+    shot:pos.shot,
+    yards:rawYards,
+    playYards,
+    club:club(playYards),
+    windClubs:shotConditions.windClubs,
+    holeClubs:shotConditions.holeClubs,
+    greenClubs:shotConditions.greenClubs
+  };
 }
 
 function nextPosition(y, previousShot=last){
@@ -724,23 +733,23 @@ function nextPosition(y, previousShot=last){
   return {hole:previousShot.hole, shot:previousShot.shot + 1};
 }
 
-function normalizeShot(shot, indexFromOldest){
-  const yards=Number(shot && shot.yards);
-  const shotWindClubs=Number.isFinite(Number(shot && shot.windClubs)) ? Number(shot.windClubs) : 0;
-  const previous=indexFromOldest===0 ? null : null;
-  return { yards, windClubs: shotWindClubs };
-}
-
 function recomputeShots(){
   const chronological=[...shots].reverse();
   const rebuilt=[];
   let previous=null;
+
   chronological.forEach(existing=>{
     const yards=Number(existing && existing.yards);
     if(!Number.isFinite(yards) || yards<=0) return;
-    const shotWindClubs=Number.isFinite(Number(existing && existing.windClubs)) ? Number(existing.windClubs) : 0;
+
+    const shotConditions={
+      windClubs:Number.isFinite(Number(existing && existing.windClubs)) ? Number(existing.windClubs) : 0,
+      holeClubs:Number.isFinite(Number(existing && existing.holeClubs)) ? Number(existing.holeClubs) : 0,
+      greenClubs:Number.isFinite(Number(existing && existing.greenClubs)) ? Number(existing.greenClubs) : 0
+    };
+
     const pos=nextPosition(yards, previous);
-    const playYards=Math.max(1, Math.round(yards + shotWindClubs * CLUB_YARD_ADJUSTMENT));
+    const playYards=adjustedYards(yards, shotConditions.windClubs, shotConditions.holeClubs, shotConditions.greenClubs);
     const shot={
       id: existing.id || (crypto.randomUUID ? crypto.randomUUID() : 'shot-'+Date.now()+'-'+Math.random().toString(16).slice(2)),
       hole: pos.hole,
@@ -748,11 +757,12 @@ function recomputeShots(){
       yards,
       playYards,
       club: club(playYards),
-      windClubs: shotWindClubs
+      ...shotConditions
     };
     rebuilt.push(shot);
     previous=shot;
   });
+
   shots=rebuilt.reverse();
   last=shots.length ? shots[0] : null;
 }
@@ -764,6 +774,15 @@ function currentProjected(){
   return {hole:1, shot:1};
 }
 
+function triggerShedAnimation(){
+  animateShed=true;
+  clearTimeout(animateShedTimer);
+  animateShedTimer=setTimeout(()=>{
+    animateShed=false;
+    renderHaiku();
+  }, 1000);
+}
+
 function renderHaiku(){
   const yPreview=input ? Number(input) : null;
   const hasPreview=Number.isFinite(yPreview) && yPreview>0;
@@ -771,18 +790,19 @@ function renderHaiku(){
   const previewAdjusted=hasPreview ? adjustedYards(yPreview) : null;
   const previewClub=hasPreview ? club(previewAdjusted) : "—";
 
-  document.getElementById("display").innerText=input||"Enter yards";
+  document.getElementById("display").innerText=input || "Enter yards";
   document.getElementById("holeShotPill").innerText=`Hole ${projected.hole} • Shot ${projected.shot}`;
   document.getElementById("statusText").innerText=`Hole ${projected.hole} • Shot ${projected.shot} • Yards ${hasPreview ? yPreview : "—"} • Play ${hasPreview ? previewAdjusted : "—"} • Club ${hasPreview ? previewClub : "—"}`;
+  document.getElementById("conditionsSummary").innerText=conditionsSummaryText();
   document.getElementById("title").innerText=last ? `Attached ${last.club}` : "Attached —";
 
-  const yForHaiku=hasPreview ? previewAdjusted : (last ? last.playYards : 0);
   const h=document.getElementById("haiku");
   h.innerHTML="";
-  haiku(yForHaiku).forEach(l=>{
+  haiku().forEach((line, index)=>{
     const d=document.createElement("div");
     d.className="line";
-    d.innerText=l;
+    if(index===2 && animateShed) d.classList.add("shedFade");
+    d.innerText=line;
     h.appendChild(d);
   });
 
@@ -801,7 +821,7 @@ function renderHaiku(){
       d.dataset.shotId=s.id;
       d.innerHTML=`
         <div class="logMain">Shot ${s.shot} • ${s.yards} raw • ${s.playYards} play • ${s.club} • Hole ${s.hole}</div>
-        <div class="logMeta">Wind at shot: ${windSummary(Number.isFinite(Number(s.windClubs)) ? Number(s.windClubs) : 0)}</div>
+        <div class="logMeta">${conditionsSummaryText(s.windClubs, s.holeClubs, s.greenClubs)}</div>
       `;
       log.appendChild(d);
     });
@@ -813,11 +833,11 @@ function commit(){
   if(!y) return;
 
   const pos=nextPosition(y);
-  const newShot=makeShot(y, windClubs, pos);
+  const newShot=makeShot(y, { windClubs, holeClubs, greenClubs }, pos);
   shots.unshift(newShot);
   last=newShot;
-
   input="";
+  triggerShedAnimation();
   renderHaiku();
   saveAll();
 }
@@ -878,9 +898,9 @@ async function clearAndStartOver(){
   const ok = confirm("Start over and clear today's round on this device?");
   if(!ok) return;
 
-  input = "";
-  last = null;
-  shots = [];
+  input="";
+  last=null;
+  shots=[];
   editingShotId="";
   editInput="";
   renderHaiku();
@@ -894,17 +914,20 @@ async function clearAndStartOver(){
   pulseSaved();
 }
 
-// ---------- Conditions popover ----------
-function renderWindDraft(){
-  const slider=document.getElementById("windSlider");
-  const label=document.getElementById("windValue");
-  slider.value=String(draftWindClubs);
-  label.innerText=windSummary(draftWindClubs);
+function renderConditionsDraft(){
+  document.getElementById("windSlider").value=String(draftWindClubs);
+  document.getElementById("holeSlider").value=String(draftHoleClubs);
+  document.getElementById("greenSlider").value=String(draftGreenClubs);
+  document.getElementById("windValue").innerText=windSummary(draftWindClubs);
+  document.getElementById("holeValue").innerText=holeSummary(draftHoleClubs);
+  document.getElementById("greenValue").innerText=greenSummary(draftGreenClubs);
 }
 
 function openWeatherModal(){
   draftWindClubs=windClubs;
-  renderWindDraft();
+  draftHoleClubs=holeClubs;
+  draftGreenClubs=greenClubs;
+  renderConditionsDraft();
   document.getElementById("weatherModal").classList.remove("hidden");
 }
 
@@ -914,12 +937,13 @@ function closeWeatherModal(){
 
 function saveWeatherSettings(){
   windClubs=draftWindClubs;
+  holeClubs=draftHoleClubs;
+  greenClubs=draftGreenClubs;
   renderHaiku();
   saveAll();
   closeWeatherModal();
 }
 
-// ---------- LiveTourney ----------
 function normalizeUrl(value){
   const v=(value||"").trim();
   if(!v) return "";
@@ -944,7 +968,6 @@ function loadLiveIntoFrame(){
   saveAll();
 }
 
-// ---------- Tabs ----------
 function setActiveTab(which, persist=true){
   activeTab = which;
   const isHaiku = which==="haiku";
@@ -955,47 +978,8 @@ function setActiveTab(which, persist=true){
   if(persist) saveAll();
 }
 
-// ---------- Events ----------
 document.getElementById("ok").onclick=commit;
 document.getElementById("clearLink").onclick=clearAndStartOver;
-
-function clearLongPress(){
-  clearTimeout(longPressTimer);
-  longPressTimer=null;
-}
-
-function startLongPress(target){
-  clearLongPress();
-  longPressFired=false;
-  const item=target.closest(".logItem[data-shot-id]");
-  if(!item) return;
-  const shotId=item.dataset.shotId;
-  longPressTimer=setTimeout(()=>{
-    longPressFired=true;
-    beginEditShot(shotId);
-  }, 450);
-}
-
-document.getElementById("log").addEventListener("pointerdown", e=>{
-  if(e.pointerType==="mouse" && e.button!==0) return;
-  startLongPress(e.target);
-});
-
-document.getElementById("log").addEventListener("pointerup", clearLongPress);
-document.getElementById("log").addEventListener("pointercancel", clearLongPress);
-document.getElementById("log").addEventListener("pointerleave", clearLongPress);
-document.getElementById("log").addEventListener("contextmenu", e=>e.preventDefault());
-document.getElementById("log").addEventListener("click", e=>{
-  const item=e.target.closest(".logItem[data-shot-id]");
-  if(!item) return;
-  if(longPressFired){
-    e.preventDefault();
-    longPressFired=false;
-    return;
-  }
-  beginEditShot(item.dataset.shotId);
-});
-
 document.getElementById("pad").onclick=e=>{
   const k=e.target.dataset.k;
   if(!k) return;
@@ -1006,36 +990,37 @@ document.getElementById("pad").onclick=e=>{
   saveAll();
 };
 
+document.getElementById("log").addEventListener("click", e=>{
+  const item=e.target.closest(".logItem[data-shot-id]");
+  if(!item) return;
+  beginEditShot(item.dataset.shotId);
+});
+
 document.getElementById("tabHaiku").onclick=()=>setActiveTab("haiku");
 document.getElementById("tabLive").onclick=()=>setActiveTab("live");
 document.getElementById("loadLiveUrl").onclick=loadLiveIntoFrame;
 document.getElementById("weatherBtn").onclick=openWeatherModal;
 document.getElementById("closeWeather").onclick=closeWeatherModal;
 document.getElementById("saveWeather").onclick=saveWeatherSettings;
-document.getElementById("editShotInput").addEventListener("input", e=>{
-  editInput=e.target.value;
+document.getElementById("windSlider").addEventListener("input", e=>{ draftWindClubs=Number(e.target.value); renderConditionsDraft(); });
+document.getElementById("holeSlider").addEventListener("input", e=>{ draftHoleClubs=Number(e.target.value); renderConditionsDraft(); });
+document.getElementById("greenSlider").addEventListener("input", e=>{ draftGreenClubs=Number(e.target.value); renderConditionsDraft(); });
+document.getElementById("weatherModal").addEventListener("click", e=>{
+  if(e.target.id==="weatherModal") closeWeatherModal();
 });
+
+document.getElementById("editShotInput").addEventListener("input", e=>{ editInput=e.target.value; });
 document.getElementById("editShotInput").addEventListener("keydown", e=>{
   if(e.key==="Enter" && editingShotId) saveShotEdit(editingShotId);
 });
 document.getElementById("closeEditShot").onclick=cancelEditShot;
 document.getElementById("cancelEditShot").onclick=cancelEditShot;
-document.getElementById("saveEditShot").onclick=()=>{
-  if(editingShotId) saveShotEdit(editingShotId);
-};
-document.getElementById("deleteEditShot").onclick=()=>{
-  if(editingShotId) deleteShot(editingShotId);
-};
-document.getElementById("windSlider").addEventListener("input", e=>{
-  draftWindClubs=Number(e.target.value);
-  renderWindDraft();
-});
-document.getElementById("weatherModal").addEventListener("click", e=>{
-  if(e.target.id==="weatherModal") closeWeatherModal();
-});
+document.getElementById("saveEditShot").onclick=()=>{ if(editingShotId) saveShotEdit(editingShotId); };
+document.getElementById("deleteEditShot").onclick=()=>{ if(editingShotId) deleteShot(editingShotId); };
 document.getElementById("editShotModal").addEventListener("click", e=>{
   if(e.target.id==="editShotModal") cancelEditShot();
 });
+
 document.getElementById("liveUrl").addEventListener("keydown", e=>{
   if(e.key==="Enter") loadLiveIntoFrame();
 });
@@ -1056,7 +1041,6 @@ document.addEventListener("keydown", e=>{
   }
 });
 
-// ---------- Init ----------
 async function init(){
   const local = loadLocalFallback();
 
@@ -1069,6 +1053,8 @@ async function init(){
     activeTab=local.settings.activeTab || "haiku";
     liveUrlValue=local.settings.liveUrlValue || "";
     windClubs=Number.isFinite(Number(local.settings.windClubs)) ? Number(local.settings.windClubs) : 0;
+    holeClubs=Number.isFinite(Number(local.settings.holeClubs)) ? Number(local.settings.holeClubs) : 0;
+    greenClubs=Number.isFinite(Number(local.settings.greenClubs)) ? Number(local.settings.greenClubs) : 0;
   }
 
   try{
@@ -1086,6 +1072,8 @@ async function init(){
       activeTab=settingsRec.state.activeTab || activeTab;
       liveUrlValue=settingsRec.state.liveUrlValue || liveUrlValue;
       windClubs=Number.isFinite(Number(settingsRec.state.windClubs)) ? Number(settingsRec.state.windClubs) : windClubs;
+      holeClubs=Number.isFinite(Number(settingsRec.state.holeClubs)) ? Number(settingsRec.state.holeClubs) : holeClubs;
+      greenClubs=Number.isFinite(Number(settingsRec.state.greenClubs)) ? Number(settingsRec.state.greenClubs) : greenClubs;
     }
   } catch(e){
     console.error("Persistence init failed", e);
