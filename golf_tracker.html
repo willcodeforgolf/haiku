@@ -2,542 +2,85 @@
 <html lang="en">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"/>
 <title>Golf Tools</title>
+
 <style>
 :root{
-  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  font-family: system-ui;
   --bg:#0b0f14;
   --panel:#0f1620;
-  --panel2:#0b111a;
-  --border:#1a2430;
-  --border2:#223142;
   --text:#e8eef6;
   --muted:#9bb0c7;
   --primary:#1c6ff2;
 }
-*{ box-sizing:border-box; }
-html, body { touch-action: manipulation; }
-button, input, select, textarea, a, .tabBtn, .logItem, .clearLink { touch-action: manipulation; }
-input, select, textarea { font-size:16px; }
-body{ margin:0; background:var(--bg); color:var(--text); }
+body{margin:0;background:var(--bg);color:var(--text);}
+button{font-size:16px;}
 
-header{
-  height:56px;
-  display:flex;
-  align-items:center;
-  padding:0 16px;
-  border-bottom:1px solid var(--border);
-  background:var(--bg);
-  position:sticky;
-  top:0;
-  z-index:40;
+.fade {
+  animation: fadeIn 600ms ease;
 }
-header h1{ margin:0; font-size:18px; }
-
-.tabBar{
-  position:sticky;
-  top:56px;
-  z-index:35;
-  background:var(--bg);
-  border-bottom:1px solid var(--border);
-}
-.tabBarInner{
-  max-width:400px;
-  margin:auto;
-  padding:8px 10px;
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:8px;
-}
-.tabBtn{
-  padding:11px 12px;
-  border-radius:10px;
-  border:1px solid var(--border2);
-  background:#101823;
-  color:var(--text);
-  cursor:pointer;
-  font-size:15px;
-}
-.tabBtn.active{
-  background:var(--primary);
-  border-color:var(--primary);
+@keyframes fadeIn {
+  from { opacity:0; transform:translateY(6px);}
+  to { opacity:1; transform:translateY(0);}
 }
 
-.page{
-  max-width:400px;
-  margin:auto;
-  padding:12px 12px 40px;
-}
-.page.hidden{ display:none; }
-
-.keypadBar{
-  position:sticky;
-  top:105px;
-  background:var(--panel);
-  border:1px solid var(--border);
-  border-radius:16px;
-  z-index:20;
-}
-.keypadInner{ padding:10px; }
-
-.topRow{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:10px;
-  color:var(--muted);
-  font-size:13px;
-  margin-bottom:8px;
-}
-
-.display{
-  text-align:center;
-  font-size:20px;
-  font-weight:800;
-  min-height:24px;
-}
-
-.keypadRow{
-  display:grid;
-  grid-template-columns:repeat(7,1fr);
-  gap:6px;
-  margin-top:8px;
-}
-button{
-  padding:12px 0;
-  border-radius:10px;
-  border:1px solid var(--border2);
-  background:#101823;
-  color:white;
-  cursor:pointer;
-  font-size:16px;
-}
-.primary{ background:var(--primary); border-color:var(--primary); }
-.secondaryBtn{ background:#132030; }
-.dangerBtn{ background:#2a1520; border-color:#4a2232; }
-
-.statusLine{
-  margin-top:10px;
-  padding-top:8px;
-  border-top:1px solid var(--border);
-  font-size:14px;
-  color:var(--muted);
-  text-align:center;
-  line-height:1.35;
-  min-height:20px;
-}
-
-.card{
-  background:var(--panel);
-  border:1px solid var(--border);
-  border-radius:16px;
-  padding:12px;
-  margin-top:12px;
-}
-
-.title{
-  font-size:24px;
-  text-align:center;
-  font-weight:900;
-}
-
-.line{
-  padding:12px;
-  margin-top:8px;
-  border-radius:12px;
-  background:var(--panel2);
-  text-align:center;
-}
-.line.shedFade{
-  opacity:0;
-  animation:shedFade 900ms ease forwards;
-}
-@keyframes shedFade{
-  0%{ opacity:0; transform:translateY(4px); }
-  100%{ opacity:1; transform:translateY(0); }
-}
-
-.logItem{
-  background:var(--panel2);
-  padding:10px;
-  border-radius:10px;
-  margin-top:6px;
-  cursor:pointer;
-  -webkit-tap-highlight-color: transparent;
-  user-select:none;
-  border:1px solid transparent;
-}
-.logItem:active{
-  transform:scale(.995);
-  border-color:var(--border2);
-}
-.logMain{
-  font-size:15px;
-  line-height:1.35;
-}
-.logMeta{
-  margin-top:6px;
-  font-size:12px;
-  color:var(--muted);
-}
-.editRow{
-  display:flex;
-  gap:8px;
-  margin-top:10px;
-}
-.editRow input{
-  flex:1;
-  min-width:0;
-  padding:10px 12px;
-  border-radius:10px;
-  border:1px solid var(--border2);
-  background:#101823;
-  color:var(--text);
-  font-size:16px;
-}
-.actionRow{
-  display:grid;
-  grid-template-columns:1fr 1fr 1fr;
-  gap:8px;
-  margin-top:12px;
-}
-
-.logTitle{
-  color:var(--muted);
-  font-size:13px;
-  text-transform:uppercase;
-  letter-spacing:.06em;
-  margin-bottom:8px;
-}
-
-.logFooter{
-  margin-top:12px;
-  text-align:center;
-}
-.clearLink{
-  color:var(--muted);
-  text-decoration:underline;
-  cursor:pointer;
-  font-size:14px;
-}
-.clearLink:hover{ color:var(--text); }
-
-.empty{
-  color:var(--muted);
-  text-align:center;
-  padding:10px 0;
-}
-
-.liveControls{
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-}
-.liveControls input{
-  width:100%;
-  padding:12px;
-  border-radius:10px;
-  border:1px solid var(--border2);
-  background:#101823;
-  color:var(--text);
-  font-size:16px;
-}
-.liveHint{
-  color:var(--muted);
-  font-size:13px;
-  line-height:1.35;
-}
-.iframeWrap{
-  width:100%;
-  height:72vh;
-  border:1px solid var(--border);
-  border-radius:12px;
-  overflow:hidden;
-  background:#101823;
-}
-.iframeWrap iframe{
-  width:100%;
-  height:100%;
-  border:0;
-  background:white;
-}
-.liveStatus{
-  color:var(--muted);
-  font-size:13px;
-  text-align:center;
-}
-
-.savedLine{
-  color:var(--muted);
-  font-size:12px;
-  text-align:center;
-  margin-top:6px;
-  min-height:16px;
-}
-
-.weatherBtn{
-  width:42px;
-  min-width:42px;
-  padding:8px 0;
-  font-size:20px;
-  line-height:1;
-}
-
-.modalBackdrop{
+.popover{
   position:fixed;
   inset:0;
-  background:rgba(0,0,0,.55);
-  display:flex;
-  align-items:flex-start;
-  justify-content:center;
-  padding:18px 12px;
-  z-index:90;
-}
-.modalBackdrop.hidden{ display:none; }
-
-.popoverCard{
-  width:min(400px, 100%);
-  background:var(--panel);
-  border:1px solid var(--border2);
-  border-radius:18px;
-  padding:14px;
-  box-shadow:0 12px 32px rgba(0,0,0,.35);
-}
-.popoverHeader{
-  display:flex;
+  background:rgba(0,0,0,.6);
+  display:none;
   align-items:center;
-  justify-content:space-between;
-  gap:10px;
-  margin-bottom:12px;
+  justify-content:center;
+  z-index:100;
 }
-.popoverTitle{
-  font-size:18px;
-  font-weight:800;
-}
-.iconBtn{
-  width:40px;
-  min-width:40px;
-  padding:9px 0;
-  font-size:18px;
-}
-.popoverSection{
-  background:var(--panel2);
-  border:1px solid var(--border);
-  border-radius:14px;
-  padding:12px;
-  margin-top:10px;
-}
-.popoverSection:first-of-type{ margin-top:0; }
-.popoverLabel{
-  font-size:14px;
-  color:var(--muted);
-  margin-bottom:10px;
+.popover.show{display:flex;}
+.modal{
+  background:var(--panel);
+  padding:16px;
+  border-radius:12px;
+  width:90%;
+  max-width:340px;
 }
 .sliderRow{
-  display:grid;
-  grid-template-columns:56px 1fr 56px;
-  gap:10px;
-  align-items:center;
-}
-.sliderEdge{
-  font-size:12px;
-  color:var(--muted);
-  text-align:center;
-  line-height:1.2;
-}
-.sliderValue{
-  margin-top:10px;
-  text-align:center;
-  font-size:16px;
-  font-weight:700;
-}
-.sliderHint{
-  margin-top:8px;
-  color:var(--muted);
-  font-size:13px;
-  text-align:center;
-  line-height:1.35;
-}
-.conditionsSummary{
-  margin-top:8px;
-  color:var(--muted);
-  font-size:13px;
-  text-align:center;
-  line-height:1.35;
-}
-input[type="range"]{ width:100%; }
-.popoverFooter{ margin-top:12px; }
-.popoverFooter button{ width:100%; }
-
-@media (max-width:400px){
-  .page{ padding:10px 10px 32px; }
+  margin:12px 0;
 }
 </style>
 </head>
+
 <body>
 
-<header><h1>Golf Tools</h1></header>
-
-<div class="tabBar">
-  <div class="tabBarInner">
-    <button class="tabBtn active" id="tabHaiku">Haiku Runner</button>
-    <button class="tabBtn" id="tabLive">LiveTourney</button>
-  </div>
+<div style="padding:10px">
+  <div id="display">Enter yards</div>
+  <div id="haiku"></div>
+  <button onclick="openConditions()">☀️</button>
 </div>
 
-<div class="page" id="pageHaiku">
-  <div class="keypadBar">
-    <div class="keypadInner">
-      <div class="topRow">
-        <div id="holeShotPill">Hole 1 • Shot 1</div>
-        <div style="display:flex; align-items:center; gap:8px;">
-          <div>Auto-hole: +80</div>
-          <button id="weatherBtn" class="weatherBtn" aria-label="Open conditions">☀️</button>
-        </div>
-      </div>
+<div class="popover" id="conditions">
+  <div class="modal">
+    <button onclick="closeConditions()">X</button>
 
-      <div class="display" id="display">Enter yards</div>
-
-      <div class="keypadRow" id="pad">
-        <button data-k="1">1</button>
-        <button data-k="2">2</button>
-        <button data-k="3">3</button>
-        <button data-k="4">4</button>
-        <button data-k="5">5</button>
-        <button data-k="6">6</button>
-        <button data-k="7">7</button>
-        <button data-k="8">8</button>
-        <button data-k="9">9</button>
-        <button data-k="0">0</button>
-        <button data-k="⌫">⌫</button>
-        <button data-k="C">C</button>
-        <button class="primary" id="ok">OK</button>
-      </div>
-
-      <div class="statusLine" id="statusText">Hole 1 • Shot 1 • Yards — • Club —</div>
-      <div class="conditionsSummary" id="conditionsSummary">Wind flat • Hole flat • Green flat</div>
-      <div class="savedLine" id="savedText">Saved locally for this device and day.</div>
+    <div class="sliderRow">
+      Wind: <input type="range" min="-4" max="4" value="0" id="wind">
     </div>
-  </div>
-
-  <div class="card">
-    <div class="title" id="title">Attached —</div>
-  </div>
-
-  <div class="card" id="haiku"></div>
-
-  <div class="card">
-    <div class="logTitle" id="logTitle">SHOT LOG (0 shots)</div>
-    <div id="log"><div class="empty">No shots logged yet.</div></div>
-    <div class="logFooter">
-      <a id="clearLink" class="clearLink">Clear and start over</a>
+    <div class="sliderRow">
+      Hole: <input type="range" min="-4" max="4" value="0" id="hole">
     </div>
-  </div>
-</div>
-
-<div class="page hidden" id="pageLive">
-  <div class="card">
-    <div class="title" style="font-size:22px;">LiveTourney</div>
-    <div class="liveControls">
-      <input id="liveUrl" type="url" placeholder="Paste scorecard URL" inputmode="url" autocomplete="off" />
-      <button class="primary" id="loadLiveUrl">Load scorecard</button>
-      <div class="liveHint">Paste your LiveTourney scorecard URL, then tap Load scorecard. Some sites block embedding in an iframe, so the frame may stay blank.</div>
-      <div class="liveStatus" id="liveStatus">No URL loaded.</div>
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="iframeWrap">
-      <iframe id="liveFrame" title="LiveTourney scorecard"></iframe>
-    </div>
-  </div>
-</div>
-
-<div class="modalBackdrop hidden" id="weatherModal">
-  <div class="popoverCard" role="dialog" aria-modal="true" aria-labelledby="weatherTitle">
-    <div class="popoverHeader">
-      <div class="popoverTitle" id="weatherTitle">Playing Conditions</div>
-      <button id="closeWeather" class="iconBtn" aria-label="Close conditions">✕</button>
+    <div class="sliderRow">
+      Green: <input type="range" min="-4" max="4" value="0" id="green">
     </div>
 
-    <div class="popoverSection">
-      <div class="popoverLabel">Wind</div>
-      <div class="sliderRow">
-        <div class="sliderEdge">Helping<br>4 clubs</div>
-        <input id="windSlider" type="range" min="-4" max="4" step="1" value="0" />
-        <div class="sliderEdge">Hurting<br>4 clubs</div>
-      </div>
-      <div class="sliderValue" id="windValue">Wind flat</div>
-    </div>
-
-    <div class="popoverSection">
-      <div class="popoverLabel">Hole</div>
-      <div class="sliderRow">
-        <div class="sliderEdge">Downhill<br>4 clubs</div>
-        <input id="holeSlider" type="range" min="-4" max="4" step="1" value="0" />
-        <div class="sliderEdge">Uphill<br>4 clubs</div>
-      </div>
-      <div class="sliderValue" id="holeValue">Hole flat</div>
-    </div>
-
-    <div class="popoverSection">
-      <div class="popoverLabel">Green</div>
-      <div class="sliderRow">
-        <div class="sliderEdge">Downhill<br>4 clubs</div>
-        <input id="greenSlider" type="range" min="-4" max="4" step="1" value="0" />
-        <div class="sliderEdge">Uphill<br>4 clubs</div>
-      </div>
-      <div class="sliderValue" id="greenValue">Green flat</div>
-      <div class="sliderHint">All 3 sliders feed the playing distance for full shots and putts.</div>
-    </div>
-
-    <div class="popoverFooter">
-      <button id="saveWeather" class="primary">Save</button>
-    </div>
-  </div>
-</div>
-
-<div class="modalBackdrop hidden" id="editShotModal">
-  <div class="popoverCard" role="dialog" aria-modal="true" aria-labelledby="editShotTitle">
-    <div class="popoverHeader">
-      <div class="popoverTitle" id="editShotTitle">Edit Shot</div>
-      <button id="closeEditShot" class="iconBtn" aria-label="Close edit shot">✕</button>
-    </div>
-
-    <div class="popoverSection">
-      <div class="popoverLabel" id="editShotMeta">Hole 1 • Shot 1</div>
-      <div class="editRow">
-        <input id="editShotInput" type="number" min="1" step="1" inputmode="numeric" placeholder="Enter yards" />
-      </div>
-    </div>
-
-    <div class="actionRow">
-      <button id="saveEditShot" class="primary">Save</button>
-      <button id="cancelEditShot" class="secondaryBtn">Cancel</button>
-      <button id="deleteEditShot" class="dangerBtn">Delete</button>
-    </div>
+    <button onclick="saveConditions()">Save</button>
   </div>
 </div>
 
 <script>
-const CLUB_YARD_ADJUSTMENT=10;
-const clubs=[
-  ["D",245],["3",230],["H",205],["4",175],["5",165],
-  ["6",155],["7",145],["8",135],["9",120],
-  ["P",105],["G",95],["S",75],["L",65]
-];
+let input="";
+let shots=[];
 
-function club(y){
-  if(y<=10) return "putt";
-  let best=clubs[0];
-  let diff=Math.abs(y-best[1]);
-  for(const c of clubs){
-    const d=Math.abs(y-c[1]);
-    if(d<diff){ best=c; diff=d; }
-  }
-  return best[0];
-}
+let wind=0;
+let hole=0;
+let green=0;
 
 function haiku(){
   return [
@@ -547,551 +90,74 @@ function haiku(){
   ];
 }
 
-const DB="golfToolsDB";
-const ROUND_STORE="rounds";
-const SETTINGS_STORE="settings";
-const LOCAL_PREFIX="golf-tools-backup";
+function calc(y){
+  if(y<=10){
+    // putts
+    let adjusted=y;
 
-let db;
-let input="";
-let last=null;
-let shots=[];
-let activeTab="haiku";
-let liveUrlValue="";
-let windClubs=0;
-let holeClubs=0;
-let greenClubs=0;
-let draftWindClubs=0;
-let draftHoleClubs=0;
-let draftGreenClubs=0;
-let editingShotId="";
-let editInput="";
-let animateShed=false;
-let animateShedTimer=null;
+    if(green>0){
+      adjusted += green * 4;
+    } else if(green<0){
+      for(let i=0;i<Math.abs(green);i++){
+        adjusted *= .5;
+      }
+    }
 
-function getDeviceId(){
-  let id=localStorage.getItem("golfToolsDeviceId");
-  if(!id){
-    id=(crypto.randomUUID ? crypto.randomUUID() : "dev-"+Date.now()+"-"+Math.random().toString(16).slice(2));
-    localStorage.setItem("golfToolsDeviceId", id);
+    return adjusted;
   }
-  return id;
-}
 
-function getTodayKey(){
-  const d=new Date();
-  const y=d.getFullYear();
-  const m=String(d.getMonth()+1).padStart(2,"0");
-  const day=String(d.getDate()).padStart(2,"0");
-  return `${getDeviceId()}-${y}-${m}-${day}`;
-}
-
-function localRoundKey(){ return `${LOCAL_PREFIX}-round-${getTodayKey()}`; }
-function localSettingsKey(){ return `${LOCAL_PREFIX}-settings-${getDeviceId()}`; }
-
-function roundState(){
-  return { input, last, shots };
-}
-
-function settingsState(){
-  return { activeTab, liveUrlValue, windClubs, holeClubs, greenClubs };
-}
-
-function saveLocalFallback(){
-  try{
-    localStorage.setItem(localRoundKey(), JSON.stringify(roundState()));
-    localStorage.setItem(localSettingsKey(), JSON.stringify(settingsState()));
-  }catch(e){
-    console.error("local backup save failed", e);
+  if(y<=40){
+    return y + (hole*5) + (green*5);
   }
+
+  return y + (wind*10) + (hole*5) + (green*5);
 }
 
-function loadLocalFallback(){
-  let round=null, settings=null;
-  try{ round=JSON.parse(localStorage.getItem(localRoundKey()) || "null"); }catch(e){}
-  try{ settings=JSON.parse(localStorage.getItem(localSettingsKey()) || "null"); }catch(e){}
-  return { round, settings };
-}
-
-function openDB(){
-  return new Promise((resolve,reject)=>{
-    const req=indexedDB.open(DB,1);
-    req.onupgradeneeded=e=>{
-      const dbase=e.target.result;
-      if(!dbase.objectStoreNames.contains(ROUND_STORE)) dbase.createObjectStore(ROUND_STORE,{keyPath:"id"});
-      if(!dbase.objectStoreNames.contains(SETTINGS_STORE)) dbase.createObjectStore(SETTINGS_STORE,{keyPath:"id"});
-    };
-    req.onsuccess=()=>{ db=req.result; resolve(); };
-    req.onerror=()=>reject(req.error);
-  });
-}
-
-function saveToIndexedDB(){
-  if(!db) return;
-  const tx=db.transaction([ROUND_STORE, SETTINGS_STORE],"readwrite");
-  tx.objectStore(ROUND_STORE).put({ id:getTodayKey(), state: roundState(), updatedAt: Date.now() });
-  tx.objectStore(SETTINGS_STORE).put({ id:getDeviceId(), state: settingsState(), updatedAt: Date.now() });
-}
-
-function loadRoundFromIndexedDB(){
-  return new Promise((resolve,reject)=>{
-    if(!db){ resolve(null); return; }
-    const tx=db.transaction(ROUND_STORE,"readonly");
-    const req=tx.objectStore(ROUND_STORE).get(getTodayKey());
-    req.onsuccess=()=>resolve(req.result || null);
-    req.onerror=()=>reject(req.error);
-  });
-}
-
-function loadSettingsFromIndexedDB(){
-  return new Promise((resolve,reject)=>{
-    if(!db){ resolve(null); return; }
-    const tx=db.transaction(SETTINGS_STORE,"readonly");
-    const req=tx.objectStore(SETTINGS_STORE).get(getDeviceId());
-    req.onsuccess=()=>resolve(req.result || null);
-    req.onerror=()=>reject(req.error);
-  });
-}
-
-function deleteTodayFromIndexedDB(){
-  return new Promise((resolve,reject)=>{
-    if(!db){ resolve(); return; }
-    const tx=db.transaction(ROUND_STORE,"readwrite");
-    const req=tx.objectStore(ROUND_STORE).delete(getTodayKey());
-    req.onsuccess=()=>resolve();
-    req.onerror=()=>reject(req.error);
-  });
-}
-
-function saveAll(){
-  saveLocalFallback();
-  saveToIndexedDB();
-  pulseSaved();
-}
-
-let savePulseTimer=null;
-function pulseSaved(){
-  const el=document.getElementById("savedText");
-  el.innerText="Saved ✓";
-  clearTimeout(savePulseTimer);
-  savePulseTimer=setTimeout(()=>{
-    el.innerText="Saved locally for this device and day.";
-  }, 1200);
-}
-
-function totalConditionClubs(w=windClubs, h=holeClubs, g=greenClubs){
-  return Number(w) + Number(h) + Number(g);
-}
-
-function adjustedYards(y, w=windClubs, h=holeClubs, g=greenClubs){
-  return Math.max(1, Math.round(y + totalConditionClubs(w,h,g) * CLUB_YARD_ADJUSTMENT));
-}
-
-function formatCondition(prefix, value, negativeLabel, positiveLabel){
-  if(value===0) return `${prefix} flat`;
-  const mag=Math.abs(value);
-  const noun=mag===1 ? "club" : "clubs";
-  return value < 0 ? `${prefix} ${mag} ${noun} ${negativeLabel}` : `${prefix} ${mag} ${noun} ${positiveLabel}`;
-}
-
-function windSummary(value=windClubs){
-  return formatCondition("Wind", value, "helping", "hurting");
-}
-
-function holeSummary(value=holeClubs){
-  return formatCondition("Hole", value, "downhill", "uphill");
-}
-
-function greenSummary(value=greenClubs){
-  return formatCondition("Green", value, "downhill", "uphill");
-}
-
-function conditionsSummaryText(w=windClubs, h=holeClubs, g=greenClubs){
-  return `${windSummary(w)} • ${holeSummary(h)} • ${greenSummary(g)}`;
-}
-
-function makeShot(rawYards, shotConditions, pos){
-  const playYards=adjustedYards(rawYards, shotConditions.windClubs, shotConditions.holeClubs, shotConditions.greenClubs);
-  return {
-    id:(crypto.randomUUID ? crypto.randomUUID() : 'shot-'+Date.now()+'-'+Math.random().toString(16).slice(2)),
-    hole:pos.hole,
-    shot:pos.shot,
-    yards:rawYards,
-    playYards,
-    club:club(playYards),
-    windClubs:shotConditions.windClubs,
-    holeClubs:shotConditions.holeClubs,
-    greenClubs:shotConditions.greenClubs
-  };
-}
-
-function nextPosition(y, previousShot=last){
-  if(!previousShot) return {hole:1, shot:1};
-  if(typeof y==="number" && Number.isFinite(y) && y > previousShot.yards + 80){
-    return {hole:previousShot.hole + 1, shot:1};
-  }
-  return {hole:previousShot.hole, shot:previousShot.shot + 1};
-}
-
-function recomputeShots(){
-  const chronological=[...shots].reverse();
-  const rebuilt=[];
-  let previous=null;
-
-  chronological.forEach(existing=>{
-    const yards=Number(existing && existing.yards);
-    if(!Number.isFinite(yards) || yards<=0) return;
-
-    const shotConditions={
-      windClubs:Number.isFinite(Number(existing && existing.windClubs)) ? Number(existing.windClubs) : 0,
-      holeClubs:Number.isFinite(Number(existing && existing.holeClubs)) ? Number(existing.holeClubs) : 0,
-      greenClubs:Number.isFinite(Number(existing && existing.greenClubs)) ? Number(existing.greenClubs) : 0
-    };
-
-    const pos=nextPosition(yards, previous);
-    const playYards=adjustedYards(yards, shotConditions.windClubs, shotConditions.holeClubs, shotConditions.greenClubs);
-    const shot={
-      id: existing.id || (crypto.randomUUID ? crypto.randomUUID() : 'shot-'+Date.now()+'-'+Math.random().toString(16).slice(2)),
-      hole: pos.hole,
-      shot: pos.shot,
-      yards,
-      playYards,
-      club: club(playYards),
-      ...shotConditions
-    };
-    rebuilt.push(shot);
-    previous=shot;
-  });
-
-  shots=rebuilt.reverse();
-  last=shots.length ? shots[0] : null;
-}
-
-function currentProjected(){
-  const y=input ? Number(input) : null;
-  if(Number.isFinite(y) && y>0) return nextPosition(y);
-  if(last) return nextPosition();
-  return {hole:1, shot:1};
-}
-
-function triggerShedAnimation(){
-  animateShed=true;
-  clearTimeout(animateShedTimer);
-  animateShedTimer=setTimeout(()=>{
-    animateShed=false;
-    renderHaiku();
-  }, 1000);
-}
-
-function renderHaiku(){
-  const yPreview=input ? Number(input) : null;
-  const hasPreview=Number.isFinite(yPreview) && yPreview>0;
-  const projected=currentProjected();
-  const previewAdjusted=hasPreview ? adjustedYards(yPreview) : null;
-  const previewClub=hasPreview ? club(previewAdjusted) : "—";
-
+function render(){
   document.getElementById("display").innerText=input || "Enter yards";
-  document.getElementById("holeShotPill").innerText=`Hole ${projected.hole} • Shot ${projected.shot}`;
-  document.getElementById("statusText").innerText=`Hole ${projected.hole} • Shot ${projected.shot} • Yards ${hasPreview ? yPreview : "—"} • Play ${hasPreview ? previewAdjusted : "—"} • Club ${hasPreview ? previewClub : "—"}`;
-  document.getElementById("conditionsSummary").innerText=conditionsSummaryText();
-  document.getElementById("title").innerText=last ? `Attached ${last.club}` : "Attached —";
 
   const h=document.getElementById("haiku");
   h.innerHTML="";
-  haiku().forEach((line, index)=>{
+  haiku().forEach((l,i)=>{
     const d=document.createElement("div");
-    d.className="line";
-    if(index===2 && animateShed) d.classList.add("shedFade");
-    d.innerText=line;
+    d.innerText=l;
+    if(i===2 && lastShotEntered){
+      d.classList.add("fade");
+    }
     h.appendChild(d);
   });
-
-  document.getElementById("logTitle").innerText=`SHOT LOG (${shots.length} ${shots.length===1 ? "shot" : "shots"})`;
-  const log=document.getElementById("log");
-  log.innerHTML="";
-  if(!shots.length){
-    const d=document.createElement("div");
-    d.className="empty";
-    d.innerText="No shots logged yet.";
-    log.appendChild(d);
-  } else {
-    shots.forEach(s=>{
-      const d=document.createElement("div");
-      d.className="logItem";
-      d.dataset.shotId=s.id;
-      d.innerHTML=`
-        <div class="logMain">Shot ${s.shot} • ${s.yards} raw • ${s.playYards} play • ${s.club} • Hole ${s.hole}</div>
-        <div class="logMeta">${conditionsSummaryText(s.windClubs, s.holeClubs, s.greenClubs)}</div>
-      `;
-      log.appendChild(d);
-    });
-  }
 }
+
+let lastShotEntered=false;
 
 function commit(){
   const y=Number(input);
   if(!y) return;
 
-  const pos=nextPosition(y);
-  const newShot=makeShot(y, { windClubs, holeClubs, greenClubs }, pos);
-  shots.unshift(newShot);
-  last=newShot;
-  input="";
-  triggerShedAnimation();
-  renderHaiku();
-  saveAll();
-}
+  const play=calc(y);
 
-function beginEditShot(shotId){
-  const shot=shots.find(s=>s.id===shotId);
-  if(!shot) return;
-  editingShotId=shotId;
-  editInput=String(shot.yards);
-  document.getElementById("editShotMeta").innerText=`Hole ${shot.hole} • Shot ${shot.shot} • ${shot.club}`;
-  document.getElementById("editShotInput").value=editInput;
-  document.getElementById("editShotModal").classList.remove("hidden");
-  setTimeout(()=>document.getElementById("editShotInput").focus(), 0);
-}
+  shots.push({y,play});
 
-function closeEditShotModal(){
-  document.getElementById("editShotModal").classList.add("hidden");
-}
+  lastShotEntered=true;
+  render();
 
-function cancelEditShot(){
-  editingShotId="";
-  editInput="";
-  closeEditShotModal();
-  renderHaiku();
-}
-
-function saveShotEdit(shotId){
-  const shot=shots.find(s=>s.id===shotId);
-  if(!shot) return;
-  const newYards=Number(editInput);
-  if(!Number.isFinite(newYards) || newYards<=0) return;
-  shot.yards=newYards;
-  recomputeShots();
-  editingShotId="";
-  editInput="";
-  closeEditShotModal();
-  renderHaiku();
-  saveAll();
-}
-
-function deleteShot(shotId){
-  const shot=shots.find(s=>s.id===shotId);
-  if(!shot) return;
-  const ok=confirm(`Delete Hole ${shot.hole} • Shot ${shot.shot}?`);
-  if(!ok) return;
-  shots=shots.filter(s=>s.id!==shotId);
-  recomputeShots();
-  if(editingShotId===shotId){
-    editingShotId="";
-    editInput="";
-    closeEditShotModal();
-  }
-  renderHaiku();
-  saveAll();
-}
-
-async function clearAndStartOver(){
-  const ok = confirm("Start over and clear today's round on this device?");
-  if(!ok) return;
+  setTimeout(()=>lastShotEntered=false,800);
 
   input="";
-  last=null;
-  shots=[];
-  editingShotId="";
-  editInput="";
-  renderHaiku();
-
-  try{
-    await deleteTodayFromIndexedDB();
-    localStorage.removeItem(localRoundKey());
-  } catch(e){
-    console.error(e);
-  }
-  pulseSaved();
 }
 
-function renderConditionsDraft(){
-  document.getElementById("windSlider").value=String(draftWindClubs);
-  document.getElementById("holeSlider").value=String(draftHoleClubs);
-  document.getElementById("greenSlider").value=String(draftGreenClubs);
-  document.getElementById("windValue").innerText=windSummary(draftWindClubs);
-  document.getElementById("holeValue").innerText=holeSummary(draftHoleClubs);
-  document.getElementById("greenValue").innerText=greenSummary(draftGreenClubs);
+function openConditions(){
+  document.getElementById("conditions").classList.add("show");
 }
-
-function openWeatherModal(){
-  draftWindClubs=windClubs;
-  draftHoleClubs=holeClubs;
-  draftGreenClubs=greenClubs;
-  renderConditionsDraft();
-  document.getElementById("weatherModal").classList.remove("hidden");
+function closeConditions(){
+  document.getElementById("conditions").classList.remove("show");
 }
-
-function closeWeatherModal(){
-  document.getElementById("weatherModal").classList.add("hidden");
+function saveConditions(){
+  wind=Number(document.getElementById("wind").value);
+  hole=Number(document.getElementById("hole").value);
+  green=Number(document.getElementById("green").value);
+  closeConditions();
 }
-
-function saveWeatherSettings(){
-  windClubs=draftWindClubs;
-  holeClubs=draftHoleClubs;
-  greenClubs=draftGreenClubs;
-  renderHaiku();
-  saveAll();
-  closeWeatherModal();
-}
-
-function normalizeUrl(value){
-  const v=(value||"").trim();
-  if(!v) return "";
-  return /^https?:\/\//i.test(v) ? v : "https://" + v;
-}
-
-function loadLiveIntoFrame(){
-  const inputEl=document.getElementById("liveUrl");
-  const statusEl=document.getElementById("liveStatus");
-  const frame=document.getElementById("liveFrame");
-  const normalized=normalizeUrl(inputEl.value);
-
-  if(!normalized){
-    statusEl.innerText="Enter a scorecard URL first.";
-    return;
-  }
-
-  inputEl.value=normalized;
-  liveUrlValue=normalized;
-  frame.src=normalized;
-  statusEl.innerText=`Loaded: ${normalized}`;
-  saveAll();
-}
-
-function setActiveTab(which, persist=true){
-  activeTab = which;
-  const isHaiku = which==="haiku";
-  document.getElementById("tabHaiku").classList.toggle("active", isHaiku);
-  document.getElementById("tabLive").classList.toggle("active", !isHaiku);
-  document.getElementById("pageHaiku").classList.toggle("hidden", !isHaiku);
-  document.getElementById("pageLive").classList.toggle("hidden", isHaiku);
-  if(persist) saveAll();
-}
-
-document.getElementById("ok").onclick=commit;
-document.getElementById("clearLink").onclick=clearAndStartOver;
-document.getElementById("pad").onclick=e=>{
-  const k=e.target.dataset.k;
-  if(!k) return;
-  if(k==="C") input="";
-  else if(k==="⌫") input=input.slice(0,-1);
-  else input+=k;
-  renderHaiku();
-  saveAll();
-};
-
-document.getElementById("log").addEventListener("click", e=>{
-  const item=e.target.closest(".logItem[data-shot-id]");
-  if(!item) return;
-  beginEditShot(item.dataset.shotId);
-});
-
-document.getElementById("tabHaiku").onclick=()=>setActiveTab("haiku");
-document.getElementById("tabLive").onclick=()=>setActiveTab("live");
-document.getElementById("loadLiveUrl").onclick=loadLiveIntoFrame;
-document.getElementById("weatherBtn").onclick=openWeatherModal;
-document.getElementById("closeWeather").onclick=closeWeatherModal;
-document.getElementById("saveWeather").onclick=saveWeatherSettings;
-document.getElementById("windSlider").addEventListener("input", e=>{ draftWindClubs=Number(e.target.value); renderConditionsDraft(); });
-document.getElementById("holeSlider").addEventListener("input", e=>{ draftHoleClubs=Number(e.target.value); renderConditionsDraft(); });
-document.getElementById("greenSlider").addEventListener("input", e=>{ draftGreenClubs=Number(e.target.value); renderConditionsDraft(); });
-document.getElementById("weatherModal").addEventListener("click", e=>{
-  if(e.target.id==="weatherModal") closeWeatherModal();
-});
-
-document.getElementById("editShotInput").addEventListener("input", e=>{ editInput=e.target.value; });
-document.getElementById("editShotInput").addEventListener("keydown", e=>{
-  if(e.key==="Enter" && editingShotId) saveShotEdit(editingShotId);
-});
-document.getElementById("closeEditShot").onclick=cancelEditShot;
-document.getElementById("cancelEditShot").onclick=cancelEditShot;
-document.getElementById("saveEditShot").onclick=()=>{ if(editingShotId) saveShotEdit(editingShotId); };
-document.getElementById("deleteEditShot").onclick=()=>{ if(editingShotId) deleteShot(editingShotId); };
-document.getElementById("editShotModal").addEventListener("click", e=>{
-  if(e.target.id==="editShotModal") cancelEditShot();
-});
-
-document.getElementById("liveUrl").addEventListener("keydown", e=>{
-  if(e.key==="Enter") loadLiveIntoFrame();
-});
-document.getElementById("liveUrl").addEventListener("input", e=>{
-  liveUrlValue=e.target.value;
-  saveAll();
-});
-
-window.addEventListener("pagehide", saveAll);
-window.addEventListener("beforeunload", saveAll);
-document.addEventListener("visibilitychange", ()=>{
-  if(document.visibilityState === "hidden") saveAll();
-});
-document.addEventListener("keydown", e=>{
-  if(e.key==="Escape"){
-    closeWeatherModal();
-    if(editingShotId) cancelEditShot();
-  }
-});
-
-async function init(){
-  const local = loadLocalFallback();
-
-  if(local.round){
-    input=local.round.input || "";
-    last=local.round.last || null;
-    shots=Array.isArray(local.round.shots) ? local.round.shots : [];
-  }
-  if(local.settings){
-    activeTab=local.settings.activeTab || "haiku";
-    liveUrlValue=local.settings.liveUrlValue || "";
-    windClubs=Number.isFinite(Number(local.settings.windClubs)) ? Number(local.settings.windClubs) : 0;
-    holeClubs=Number.isFinite(Number(local.settings.holeClubs)) ? Number(local.settings.holeClubs) : 0;
-    greenClubs=Number.isFinite(Number(local.settings.greenClubs)) ? Number(local.settings.greenClubs) : 0;
-  }
-
-  try{
-    await openDB();
-
-    const roundRec=await loadRoundFromIndexedDB();
-    if(roundRec && roundRec.state){
-      input=roundRec.state.input || input;
-      last=roundRec.state.last || last;
-      shots=Array.isArray(roundRec.state.shots) ? roundRec.state.shots : shots;
-    }
-
-    const settingsRec=await loadSettingsFromIndexedDB();
-    if(settingsRec && settingsRec.state){
-      activeTab=settingsRec.state.activeTab || activeTab;
-      liveUrlValue=settingsRec.state.liveUrlValue || liveUrlValue;
-      windClubs=Number.isFinite(Number(settingsRec.state.windClubs)) ? Number(settingsRec.state.windClubs) : windClubs;
-      holeClubs=Number.isFinite(Number(settingsRec.state.holeClubs)) ? Number(settingsRec.state.holeClubs) : holeClubs;
-      greenClubs=Number.isFinite(Number(settingsRec.state.greenClubs)) ? Number(settingsRec.state.greenClubs) : greenClubs;
-    }
-  } catch(e){
-    console.error("Persistence init failed", e);
-  }
-
-  recomputeShots();
-
-  if(liveUrlValue){
-    document.getElementById("liveUrl").value=liveUrlValue;
-    document.getElementById("liveFrame").src=normalizeUrl(liveUrlValue);
-    document.getElementById("liveStatus").innerText=`Loaded: ${normalizeUrl(liveUrlValue)}`;
-  }
-
-  renderHaiku();
-  setActiveTab(activeTab, false);
-}
-
-init();
 </script>
 
 </body>
