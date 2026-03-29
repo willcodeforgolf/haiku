@@ -276,7 +276,7 @@ input[type="range"]{ width:100%; padding:0; background:transparent; }
   </div>
 
   <div class="card">
-    <div class="title" id="title">Attached —</div>
+    <div class="title" id="title">A.T.T.A.C.H.E.D. —</div>
   </div>
 
   <div class="card" id="haiku"></div>
@@ -404,8 +404,8 @@ function club(y){
 
 function haiku(){
   return [
-    "Cue Address Roll Ease",
-    "Eye 1 2 3 4 1 2",
+    "Cue. Address. Waggle.",
+    "Easy 1 2 3 4 Thigh",
     "Step Hum Exhale Doubt"
   ];
 }
@@ -619,7 +619,7 @@ function renderHaiku(triggerShedPulse=false){
   document.getElementById("holeShotPill").innerText=`Hole ${projected.hole} • Shot ${projected.shot}`;
   document.getElementById("statusText").innerText=`Hole ${projected.hole} • Shot ${projected.shot} • Yards ${hasPreview ? yPreview : "—"} • Play ${hasPreview ? previewAdjusted : "—"} • Club ${hasPreview ? previewClub : "—"}`;
   document.getElementById("conditionsSummary").innerText=conditionsSummaryText();
-  document.getElementById("title").innerText=last ? `Attached ${last.club}` : "Attached —";
+  document.getElementById("title").innerText=last ? `A.T.T.A.C.H.E.D. ${last.club}` : "A.T.T.A.C.H.E.D. —";
 
   const h=document.getElementById("haiku");
   h.innerHTML="";
