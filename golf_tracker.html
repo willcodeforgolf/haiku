@@ -227,6 +227,64 @@ input[type="range"]{ width:100%; padding:0; background:transparent; }
 .modalActions{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin-top:14px; }
 .conditionsActions{ display:grid; grid-template-columns:1fr; gap:8px; margin-top:14px; }
 
+
+.courseMemoryCard{ padding-top:10px; }
+.memoryTop{
+  display:flex; align-items:center; justify-content:space-between; gap:10px;
+  margin-bottom:8px;
+}
+.memoryLabel{
+  color:var(--muted);
+  font-size:13px;
+  text-transform:uppercase;
+  letter-spacing:.06em;
+}
+.memoryLink{
+  color:var(--muted);
+  text-decoration:underline;
+  cursor:pointer;
+  font-size:14px;
+}
+.memoryLink:hover{ color:var(--text); }
+.memoryStatus{
+  color:var(--muted);
+  font-size:13px;
+  margin-bottom:8px;
+}
+.memoryPreview{
+  background:var(--panel2);
+  border-radius:12px;
+  padding:10px;
+  white-space:pre-wrap;
+  line-height:1.35;
+  font-size:13px;
+  max-height:220px;
+  overflow:auto;
+}
+.memoryEmpty{
+  color:var(--muted);
+  text-align:center;
+  padding:10px 0;
+}
+.memoryActions{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:8px;
+  margin-top:14px;
+}
+#memoryPreviewWrap.hidden{ display:none; }
+.modalBody textarea{
+  width:100%;
+  min-height:260px;
+  padding:12px;
+  border-radius:10px;
+  border:1px solid var(--border2);
+  background:#101823;
+  color:var(--text);
+  resize:vertical;
+  font:inherit;
+}
+
 @media (max-width:400px){ .page{ padding:10px 10px 32px; } }
 </style>
 </head>
@@ -276,10 +334,25 @@ input[type="range"]{ width:100%; padding:0; background:transparent; }
   </div>
 
   <div class="card">
-    <div class="title" id="title">A.T.T.A.C.H.E.D. —</div>
+    <div class="title" id="title">Attached —</div>
   </div>
 
   <div class="card" id="haiku"></div>
+
+
+  <div class="card courseMemoryCard">
+    <div class="memoryTop">
+      <div class="memoryLabel">Course memory</div>
+      <div style="display:flex; align-items:center; gap:12px;">
+        <a id="toggleMdLink" class="memoryLink">Show</a>
+        <a id="openMdLink" class="memoryLink">Paste / edit MD</a>
+      </div>
+    </div>
+    <div class="memoryStatus" id="memoryStatus">Olympia strategy loaded.</div>
+    <div id="memoryPreviewWrap" class="hidden">
+      <div class="memoryPreview" id="memoryPreview"></div>
+    </div>
+  </div>
 
   <div class="card">
     <div class="logTitle" id="logTitle">SHOT LOG (0 shots)</div>
@@ -362,6 +435,28 @@ input[type="range"]{ width:100%; padding:0; background:transparent; }
   </div>
 </div>
 
+
+<div class="modalBackdrop hidden" id="mdModal" aria-hidden="true">
+  <div class="modal">
+    <div class="modalHeader">
+      <div>
+        <div class="modalTitle">Course markdown</div>
+        <div class="modalSub">Paste course strategy markdown here so it stays in memory on this device.</div>
+      </div>
+      <button id="closeMd" class="iconBtn" aria-label="Close markdown editor">✕</button>
+    </div>
+    <div class="modalBody">
+      <textarea id="mdTextarea" placeholder="Paste course markdown here"></textarea>
+      <div class="modalSub" style="margin-top:8px;">This is saved locally with the app settings and reloads on startup.</div>
+      <div class="memoryActions">
+        <button class="primary" id="saveMd">Save</button>
+        <button class="secondaryBtn" id="cancelMd">Cancel</button>
+        <button class="dangerBtn" id="clearMd">Clear</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
 const clubs=[
   ["D",245],["3",230],["H",205],["4",175],["5",165],
@@ -390,6 +485,10 @@ let draftGreenClubs=0;
 let editingShotId=null;
 let savePulseTimer=null;
 let shedPulseTimer=null;
+const DEFAULT_COURSE_MD='# Course Details\n**Name**: Olympia Country & Golf Club\n**Tee Played**: White\n**Player Strategy**: Play to 120 yards whenever unsure. Driver ~250 (cut). 120 yard club = PW.\n\n---\n\n## Course Strategy Overview\n- Default goal: **leave 120 yards in**\n- When in doubt: **lay up to 120**\n- Favor position over distance\n- Avoid penalty areas at all costs\n\n---\n\n## Hole-by-Hole Strategy (White Tees)\n\n### Hole 1 – Par 4 – 225\n**Plan**: Easy start  \n**Play**: Iron or hybrid ~100–120  \n**Approach**: Full PW  \n\n---\n\n### Hole 2 – Par 3 – 110\n**Plan**: Direct  \n**Play**: Smooth PW  \n\n---\n\n### Hole 3 – Par 4 – 364\n**Plan**: Position first  \n**Play**: Driver (~250) → leaves ~110  \n**Approach**: PW  \n\n---\n\n### Hole 4 – Par 4 – 366\n**Plan**: Tough hole  \n**Play**: Driver  \n**Miss**: Favor safe side  \n**Approach**: Likely 120+  \n\n---\n\n### Hole 5 – Par 4 – 258\n**Plan**: Avoid left  \n**Play**: Lay up to 120 (iron ~140)  \n**Approach**: PW  \n\n---\n\n### Hole 6 – Par 5 – 463\n**Plan**: 3-shot hole  \n**Play**: Driver → layup → 120  \n**Approach**: PW  \n\n---\n\n### Hole 7 – Par 5 – 481\n**Plan**: Same as 6  \n**Play**: Driver → layup → 120  \n\n---\n\n### Hole 8 – Par 3 – 188\n**Plan**: Center of green  \n**Play**: Long iron/hybrid  \n\n---\n\n### Hole 9 – Par 3 – 133\n**Plan**: Slightly longer wedge  \n**Play**: Controlled PW  \n\n---\n\n### Hole 10 – Par 4 – 310\n**Plan**: Position > distance  \n**Play**: Lay up to 120  \n**Avoid**: Trouble areas  \n\n---\n\n### Hole 11 – Par 4 – 407\n**Plan**: Driver hole  \n**Play**: Driver → mid iron  \n\n---\n\n### Hole 12 – Par 4 – 417\n**Plan**: Hardest hole  \n**Play**: Driver → take medicine  \n**Goal**: Bogey OK  \n\n---\n\n### Hole 13 – Par 3 – 150\n**Plan**: Middle of green  \n**Play**: 7–8 iron  \n\n---\n\n### Hole 14 – Par 5 – 505\n**Plan**: Scoring chance  \n**Play**: Driver → layup → 120  \n\n---\n\n### Hole 15 – Par 5 – 466\n**Plan**: Same pattern  \n**Play**: Driver → layup → 120  \n\n---\n\n### Hole 16 – Par 4 – 399\n**Plan**: Solid drive  \n**Play**: Driver → approach  \n\n---\n\n### Hole 17 – Par 3 – 160\n**Plan**: Avoid water  \n**Play**: Club up if unsure  \n\n---\n\n### Hole 18 – Par 4 – 437\n**Plan**: Finish strong  \n**Play**: Driver → approach  \n**Miss**: Safe side  \n\n---\n\n## Mental Game\n- SHED after every shot  \n- Commit fully  \n- Play to your number (120)';
+let courseMarkdown=DEFAULT_COURSE_MD;
+let draftCourseMarkdown=DEFAULT_COURSE_MD;
+let isMemoryExpanded=false;
 
 function club(y){
   if(y<=10) return "putt";
@@ -404,8 +503,8 @@ function club(y){
 
 function haiku(){
   return [
-    "Cue. Address. Waggle.",
-    "Easy 1 2 3 4 Thigh",
+    "Cue Address Roll Ease",
+    "Eye 1 2 3 4 1 2",
     "Step Hum Exhale Doubt"
   ];
 }
@@ -481,7 +580,7 @@ function getTodayKey(){
 function localRoundKey(){ return `${LOCAL_PREFIX}-round-${getTodayKey()}`; }
 function localSettingsKey(){ return `${LOCAL_PREFIX}-settings-${getDeviceId()}`; }
 function roundState(){ return { input, last, shots }; }
-function settingsState(){ return { activeTab, liveUrlValue, windClubs, holeClubs, greenClubs }; }
+function settingsState(){ return { activeTab, liveUrlValue, windClubs, holeClubs, greenClubs, courseMarkdown, isMemoryExpanded }; }
 
 function saveLocalFallback(){
   try{
@@ -608,6 +707,93 @@ function currentProjected(){
   return { hole:1, shot:1 };
 }
 
+
+function summarizeMarkdown(md){
+  const text=(md || "").trim();
+  if(!text) return { status:"No course markdown loaded.", preview:"" };
+  const lines=text.split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
+  const titleLine=lines.find(line=>line.startsWith("# ")) || "";
+  const heading=titleLine ? titleLine.replace(/^#\s+/, "") : "Course markdown loaded.";
+  return { status:heading, preview:text };
+}
+function getCurrentHoleNumber(){
+  const projected=currentProjected();
+  return projected && projected.hole ? projected.hole : 1;
+}
+function extractHoleSection(md, holeNumber){
+  const text=(md || "").trim();
+  if(!text) return "";
+  const normalized=text.replace(/\r\n/g, "\n");
+  const headingRegex=new RegExp("^###\\s+Hole\\s+" + holeNumber + "\\b.*$", "mi");
+  const match=normalized.match(headingRegex);
+  if(!match) return "";
+  const start=match.index;
+  const rest=normalized.slice(start);
+  const afterHeading=rest.slice(match[0].length);
+  const nextMatch=afterHeading.match(/\n###\s+Hole\s+\d+\b/i);
+  if(nextMatch){
+    return rest.slice(0, match[0].length + nextMatch.index).trim();
+  }
+  return rest.trim();
+}
+function renderCourseMemory(){
+  const summary=summarizeMarkdown(courseMarkdown);
+  const statusEl=document.getElementById("memoryStatus");
+  const previewEl=document.getElementById("memoryPreview");
+  const previewWrap=document.getElementById("memoryPreviewWrap");
+  const toggleEl=document.getElementById("toggleMdLink");
+  const currentHole=getCurrentHoleNumber();
+  const holeSection=extractHoleSection(courseMarkdown, currentHole);
+  const hasMarkdown=!!(courseMarkdown && courseMarkdown.trim());
+
+  statusEl.innerText=hasMarkdown ? `${summary.status} • Hole ${currentHole}` : summary.status;
+
+  if(holeSection){
+    previewEl.innerText=holeSection;
+    previewEl.classList.remove("memoryEmpty");
+  }else if(hasMarkdown){
+    previewEl.innerText=`No section found for Hole ${currentHole}. Add a markdown heading like "### Hole ${currentHole}".`;
+    previewEl.classList.add("memoryEmpty");
+  }else{
+    previewEl.innerText="Paste course markdown to keep hole strategy in memory.";
+    previewEl.classList.add("memoryEmpty");
+  }
+
+  toggleEl.innerText=isMemoryExpanded ? "Hide" : "Show";
+  toggleEl.style.visibility=hasMarkdown ? "visible" : "hidden";
+  previewWrap.classList.toggle("hidden", !hasMarkdown || !isMemoryExpanded);
+}
+function toggleCourseMemory(){
+  isMemoryExpanded=!isMemoryExpanded;
+  renderCourseMemory();
+  saveAll();
+}
+function openMdModal(){
+  draftCourseMarkdown=courseMarkdown || "";
+  document.getElementById("mdTextarea").value=draftCourseMarkdown;
+  document.getElementById("mdModal").classList.remove("hidden");
+}
+function closeMdModal(){
+  document.getElementById("mdModal").classList.add("hidden");
+}
+function saveMarkdownMemory(){
+  courseMarkdown=(document.getElementById("mdTextarea").value || "").trim();
+  isMemoryExpanded=false;
+  renderCourseMemory();
+  saveAll();
+  closeMdModal();
+}
+function clearMarkdownMemory(){
+  const ok=confirm("Clear saved course markdown from memory on this device?");
+  if(!ok) return;
+  courseMarkdown="";
+  isMemoryExpanded=false;
+  document.getElementById("mdTextarea").value="";
+  renderCourseMemory();
+  saveAll();
+  closeMdModal();
+}
+
 function renderHaiku(triggerShedPulse=false){
   const yPreview=input ? Number(input) : null;
   const hasPreview=Number.isFinite(yPreview) && yPreview>0;
@@ -619,7 +805,7 @@ function renderHaiku(triggerShedPulse=false){
   document.getElementById("holeShotPill").innerText=`Hole ${projected.hole} • Shot ${projected.shot}`;
   document.getElementById("statusText").innerText=`Hole ${projected.hole} • Shot ${projected.shot} • Yards ${hasPreview ? yPreview : "—"} • Play ${hasPreview ? previewAdjusted : "—"} • Club ${hasPreview ? previewClub : "—"}`;
   document.getElementById("conditionsSummary").innerText=conditionsSummaryText();
-  document.getElementById("title").innerText=last ? `A.T.T.A.C.H.E.D. ${last.club}` : "A.T.T.A.C.H.E.D. —";
+  document.getElementById("title").innerText=last ? `Attached ${last.club}` : "Attached —";
 
   const h=document.getElementById("haiku");
   h.innerHTML="";
@@ -807,8 +993,15 @@ document.getElementById("closeEdit").onclick=closeEditModal;
 document.getElementById("cancelEdit").onclick=closeEditModal;
 document.getElementById("saveEdit").onclick=saveEditedShot;
 document.getElementById("deleteEdit").onclick=deleteEditedShot;
+document.getElementById("toggleMdLink").onclick=toggleCourseMemory;
+document.getElementById("openMdLink").onclick=openMdModal;
+document.getElementById("closeMd").onclick=closeMdModal;
+document.getElementById("cancelMd").onclick=closeMdModal;
+document.getElementById("saveMd").onclick=saveMarkdownMemory;
+document.getElementById("clearMd").onclick=clearMarkdownMemory;
 
 document.getElementById("weatherModal").addEventListener("click", e=>{ if(e.target.id==="weatherModal") closeWeatherModal(); });
+document.getElementById("mdModal").addEventListener("click", e=>{ if(e.target.id==="mdModal") closeMdModal(); });
 document.getElementById("editModal").addEventListener("click", e=>{ if(e.target.id==="editModal") closeEditModal(); });
 window.addEventListener("pagehide", saveAll);
 window.addEventListener("beforeunload", saveAll);
@@ -827,6 +1020,8 @@ async function init(){
     windClubs=Number.isFinite(Number(local.settings.windClubs)) ? Number(local.settings.windClubs) : 0;
     holeClubs=Number.isFinite(Number(local.settings.holeClubs)) ? Number(local.settings.holeClubs) : 0;
     greenClubs=Number.isFinite(Number(local.settings.greenClubs)) ? Number(local.settings.greenClubs) : 0;
+    courseMarkdown=typeof local.settings.courseMarkdown === "string" ? local.settings.courseMarkdown : courseMarkdown;
+    isMemoryExpanded=!!local.settings.isMemoryExpanded;
   }
 
   try{
@@ -844,6 +1039,8 @@ async function init(){
       windClubs=Number.isFinite(Number(settingsRec.state.windClubs)) ? Number(settingsRec.state.windClubs) : windClubs;
       holeClubs=Number.isFinite(Number(settingsRec.state.holeClubs)) ? Number(settingsRec.state.holeClubs) : holeClubs;
       greenClubs=Number.isFinite(Number(settingsRec.state.greenClubs)) ? Number(settingsRec.state.greenClubs) : greenClubs;
+      courseMarkdown=typeof settingsRec.state.courseMarkdown === "string" ? settingsRec.state.courseMarkdown : courseMarkdown;
+      isMemoryExpanded=!!settingsRec.state.isMemoryExpanded;
     }
   }catch(e){ console.error("Persistence init failed", e); }
 
@@ -855,6 +1052,7 @@ async function init(){
     document.getElementById("liveStatus").innerText=`Loaded: ${normalizeUrl(liveUrlValue)}`;
   }
 
+  renderCourseMemory();
   renderHaiku();
   setActiveTab(activeTab, false);
 }
