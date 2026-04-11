@@ -1,1063 +1,1941 @@
 <!doctype html>
 <html lang="en">
-<head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
-<title>Golf Tools</title>
-<style>
-:root{
-  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-  --bg:#0b0f14;
-  --panel:#0f1620;
-  --panel2:#0b111a;
-  --border:#1a2430;
-  --border2:#223142;
-  --text:#e8eef6;
-  --muted:#9bb0c7;
-  --primary:#1c6ff2;
-  --danger:#a33434;
-}
-*{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
-html,body{ margin:0; background:var(--bg); color:var(--text); touch-action:manipulation; }
-body{ min-height:100vh; }
-button,input,a,textarea,select,.tabBtn,.logItem,.clearLink{ touch-action:manipulation; font-size:16px; }
-button,input{ font:inherit; }
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
+    />
+    <title>Golf Tools</title>
+    <style>
+      :root {
+        font-family:
+          system-ui,
+          -apple-system,
+          Segoe UI,
+          Roboto,
+          Arial,
+          sans-serif;
+        --bg: #0b0f14;
+        --panel: #0f1620;
+        --panel2: #0b111a;
+        --border: #1a2430;
+        --border2: #223142;
+        --text: #e8eef6;
+        --muted: #9bb0c7;
+        --primary: #1c6ff2;
+        --danger: #a33434;
+      }
+      * {
+        box-sizing: border-box;
+        -webkit-tap-highlight-color: transparent;
+      }
+      html,
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        touch-action: manipulation;
+      }
+      body {
+        min-height: 100vh;
+      }
+      button,
+      input,
+      a,
+      textarea,
+      select,
+      .tabBtn,
+      .logItem,
+      .clearLink {
+        touch-action: manipulation;
+        font-size: 16px;
+      }
+      button,
+      input {
+        font: inherit;
+      }
 
-header{
-  height:56px;
-  display:flex;
-  align-items:center;
-  padding:0 16px;
-  border-bottom:1px solid var(--border);
-  background:var(--bg);
-  position:sticky;
-  top:0;
-  z-index:40;
-}
-header h1{ margin:0; font-size:18px; }
+      header {
+        height: 56px;
+        display: flex;
+        align-items: center;
+        padding: 0 16px;
+        border-bottom: 1px solid var(--border);
+        background: var(--bg);
+        position: sticky;
+        top: 0;
+        z-index: 40;
+      }
+      header h1 {
+        margin: 0;
+        font-size: 18px;
+      }
 
-.tabBar{
-  position:sticky;
-  top:56px;
-  z-index:35;
-  background:var(--bg);
-  border-bottom:1px solid var(--border);
-}
-.tabBarInner{
-  max-width:400px;
-  margin:auto;
-  padding:8px 10px;
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:8px;
-}
-.tabBtn{
-  padding:11px 12px;
-  border-radius:10px;
-  border:1px solid var(--border2);
-  background:#101823;
-  color:var(--text);
-  cursor:pointer;
-}
-.tabBtn.active{ background:var(--primary); border-color:var(--primary); }
+      .tabBar {
+        position: sticky;
+        top: 56px;
+        z-index: 35;
+        background: var(--bg);
+        border-bottom: 1px solid var(--border);
+      }
+      .tabBarInner {
+        max-width: 400px;
+        margin: auto;
+        padding: 8px 10px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+      }
+      .tabBtn {
+        padding: 11px 12px;
+        border-radius: 10px;
+        border: 1px solid var(--border2);
+        background: #101823;
+        color: var(--text);
+        cursor: pointer;
+      }
+      .tabBtn.active {
+        background: var(--primary);
+        border-color: var(--primary);
+      }
 
-.page{
-  max-width:400px;
-  margin:auto;
-  padding:12px 12px 40px;
-}
-.page.hidden{ display:none; }
+      .page {
+        max-width: 400px;
+        margin: auto;
+        padding: 12px 12px 40px;
+      }
+      .page.hidden {
+        display: none;
+      }
 
-.keypadBar{
-  position:sticky;
-  top:105px;
-  background:var(--panel);
-  border:1px solid var(--border);
-  border-radius:16px;
-  z-index:20;
-}
-.keypadInner{ padding:10px; }
-.topRow{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:10px;
-  color:var(--muted);
-  font-size:13px;
-  margin-bottom:8px;
-}
-.topRowRight{ display:flex; align-items:center; gap:8px; }
-.weatherBtn,.iconBtn{
-  width:36px; height:36px;
-  display:grid; place-items:center;
-  border-radius:10px;
-  border:1px solid var(--border2);
-  background:#101823; color:var(--text);
-  padding:0;
-}
-.display{
-  text-align:center;
-  font-size:20px;
-  font-weight:800;
-  min-height:24px;
-}
-.keypadRow{
-  display:grid;
-  grid-template-columns:repeat(7,1fr);
-  gap:6px;
-  margin-top:8px;
-}
-button{
-  padding:12px 0;
-  border-radius:10px;
-  border:1px solid var(--border2);
-  background:#101823;
-  color:white;
-  cursor:pointer;
-}
-.primary{ background:var(--primary); border-color:var(--primary); }
-.secondaryBtn{ background:#141d29; }
-.dangerBtn{ background:var(--danger); border-color:var(--danger); }
+      .hidden {
+        display: none !important;
+      }
 
-.statusLine,.savedLine,.conditionsSummary{
-  text-align:center;
-  color:var(--muted);
-}
-.statusLine{
-  margin-top:10px;
-  padding-top:8px;
-  border-top:1px solid var(--border);
-  font-size:14px;
-  line-height:1.3;
-  min-height:20px;
-}
-.conditionsSummary{ font-size:12px; margin-top:6px; min-height:16px; }
-.savedLine{ font-size:12px; margin-top:6px; min-height:16px; }
+      #display.hidden,
+      #pad.hidden {
+        display: none !important;
+      }
 
-.card{
-  background:var(--panel);
-  border:1px solid var(--border);
-  border-radius:16px;
-  padding:12px;
-  margin-top:12px;
-}
-.title{ font-size:24px; text-align:center; font-weight:900; }
-.line{
-  padding:12px;
-  margin-top:8px;
-  border-radius:12px;
-  background:var(--panel2);
-  text-align:center;
-}
-.shedLine{ opacity:.82; transition:opacity .45s ease; }
-.shedPulse{ animation:shedFade .85s ease; }
-@keyframes shedFade{
-  0%{ opacity:.25; }
-  45%{ opacity:1; }
-  100%{ opacity:.82; }
-}
+      .keypadBar {
+        position: sticky;
+        top: 105px;
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        z-index: 20;
+      }
+      .keypadInner {
+        padding: 10px;
+      }
+      .topRow {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        color: var(--muted);
+        font-size: 13px;
+        margin-bottom: 8px;
+      }
+      .topRowRight {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .weatherBtn,
+      .iconBtn {
+        width: 36px;
+        height: 36px;
+        display: grid;
+        place-items: center;
+        border-radius: 10px;
+        border: 1px solid var(--border2);
+        background: #101823;
+        color: var(--text);
+        padding: 0;
+      }
+      .display {
+        text-align: center;
+        font-size: 20px;
+        font-weight: 800;
+        min-height: 24px;
+      }
+      .keypadRow {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 6px;
+        margin-top: 8px;
+      }
+      button {
+        padding: 12px 0;
+        border-radius: 10px;
+        border: 1px solid var(--border2);
+        background: #101823;
+        color: white;
+        cursor: pointer;
+      }
+      .primary {
+        background: var(--primary);
+        border-color: var(--primary);
+      }
+      .secondaryBtn {
+        background: #141d29;
+      }
+      .dangerBtn {
+        background: var(--danger);
+        border-color: var(--danger);
+      }
 
-.logItem{
-  background:var(--panel2);
-  padding:10px;
-  border-radius:10px;
-  margin-top:6px;
-  cursor:pointer;
-}
-.logMain{ font-size:14px; }
-.logMeta{ color:var(--muted); font-size:12px; margin-top:4px; }
-.logTitle{
-  color:var(--muted);
-  font-size:13px;
-  text-transform:uppercase;
-  letter-spacing:.06em;
-  margin-bottom:8px;
-}
-.logFooter{ margin-top:12px; text-align:center; }
-.clearLink{ color:var(--muted); text-decoration:underline; cursor:pointer; }
-.clearLink:hover{ color:var(--text); }
-.empty{ color:var(--muted); text-align:center; padding:10px 0; }
+      .statusLine,
+      .savedLine,
+      .conditionsSummary {
+        text-align: center;
+        color: var(--muted);
+      }
+      .statusLine {
+        margin-top: 10px;
+        padding-top: 8px;
+        border-top: 1px solid var(--border);
+        font-size: 14px;
+        line-height: 1.3;
+        min-height: 20px;
+      }
+      .conditionsSummary {
+        font-size: 12px;
+        margin-top: 6px;
+        min-height: 16px;
+      }
+      .savedLine {
+        font-size: 12px;
+        margin-top: 6px;
+        min-height: 16px;
+      }
 
-.liveControls{ display:flex; flex-direction:column; gap:10px; }
-.liveControls input,.modalBody input{
-  width:100%; padding:12px;
-  border-radius:10px;
-  border:1px solid var(--border2);
-  background:#101823;
-  color:var(--text);
-}
-.liveHint,.sliderHint{ color:var(--muted); font-size:13px; line-height:1.35; }
-.liveStatus{ color:var(--muted); font-size:13px; text-align:center; }
-.iframeWrap{
-  width:100%; height:72vh;
-  border:1px solid var(--border);
-  border-radius:12px;
-  overflow:hidden;
-  background:#101823;
-}
-.iframeWrap iframe{ width:100%; height:100%; border:0; background:white; }
+      .card {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 12px;
+        margin-top: 12px;
+      }
+      .title {
+        font-size: 24px;
+        text-align: center;
+        font-weight: 900;
+      }
+      .line {
+        padding: 12px;
+        margin-top: 8px;
+        border-radius: 12px;
+        background: var(--panel2);
+        text-align: center;
+      }
+      .shedLine {
+        opacity: 0.82;
+        transition: opacity 0.45s ease;
+      }
+      .shedPulse {
+        animation: shedFade 0.85s ease;
+      }
+      @keyframes shedFade {
+        0% {
+          opacity: 0.25;
+        }
+        45% {
+          opacity: 1;
+        }
+        100% {
+          opacity: 0.82;
+        }
+      }
 
-.modalBackdrop{
-  position:fixed; inset:0;
-  background:rgba(2,6,12,.72);
-  display:flex; align-items:flex-end; justify-content:center;
-  padding:14px;
-  z-index:100;
-}
-.modalBackdrop.hidden{ display:none; }
-.modal{
-  width:100%; max-width:400px;
-  background:var(--panel);
-  border:1px solid var(--border);
-  border-radius:18px;
-  padding:12px;
-  box-shadow:0 18px 48px rgba(0,0,0,.45);
-}
-.modalHeader{
-  display:flex; align-items:center; justify-content:space-between; gap:10px;
-  margin-bottom:8px;
-}
-.modalTitle{ font-size:18px; font-weight:800; }
-.modalSub{ color:var(--muted); font-size:13px; }
-.modalBody{ padding-top:4px; }
-.sliderGroup{ margin-top:12px; }
-.sliderRow{ display:flex; justify-content:space-between; gap:8px; font-size:13px; color:var(--muted); margin-bottom:6px; }
-.sliderValue{ text-align:center; color:var(--text); font-size:14px; margin-top:6px; }
-input[type="range"]{ width:100%; padding:0; background:transparent; }
-.modalActions{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin-top:14px; }
-.conditionsActions{ display:grid; grid-template-columns:1fr; gap:8px; margin-top:14px; }
+      .logItem {
+        background: var(--panel2);
+        padding: 10px;
+        border-radius: 10px;
+        margin-top: 6px;
+        cursor: pointer;
+      }
+      .logMain {
+        font-size: 14px;
+      }
+      .logMeta {
+        color: var(--muted);
+        font-size: 12px;
+        margin-top: 4px;
+      }
+      .logTitle {
+        color: var(--muted);
+        font-size: 13px;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        margin-bottom: 8px;
+      }
+      .logFooter {
+        margin-top: 12px;
+        text-align: center;
+      }
+      .clearLink {
+        color: var(--muted);
+        text-decoration: underline;
+        cursor: pointer;
+      }
+      .clearLink:hover {
+        color: var(--text);
+      }
+      .empty {
+        color: var(--muted);
+        text-align: center;
+        padding: 10px 0;
+      }
+
+      .liveControls {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      .liveControls input,
+      .modalBody input {
+        width: 100%;
+        padding: 12px;
+        border-radius: 10px;
+        border: 1px solid var(--border2);
+        background: #101823;
+        color: var(--text);
+      }
+      .liveHint,
+      .sliderHint {
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.35;
+      }
+      .liveStatus {
+        color: var(--muted);
+        font-size: 13px;
+        text-align: center;
+      }
+      .iframeWrap {
+        width: 100%;
+        height: 72vh;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        overflow: hidden;
+        background: #101823;
+      }
+      .iframeWrap iframe {
+        width: 100%;
+        height: 100%;
+        border: 0;
+        background: white;
+      }
+
+      .modalBackdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(2, 6, 12, 0.72);
+        display: flex;
+        align-items: flex-end;
+        justify-content: center;
+        padding: 14px;
+        z-index: 100;
+      }
+      .modalBackdrop.hidden {
+        display: none;
+      }
+      .modal {
+        width: 100%;
+        max-width: 400px;
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        padding: 12px;
+        box-shadow: 0 18px 48px rgba(0, 0, 0, 0.45);
+      }
+      .modalHeader {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        margin-bottom: 8px;
+      }
+      .modalTitle {
+        font-size: 18px;
+        font-weight: 800;
+      }
+      .modalSub {
+        color: var(--muted);
+        font-size: 13px;
+      }
+      .modalBody {
+        padding-top: 4px;
+      }
+      .sliderGroup {
+        margin-top: 12px;
+      }
+      .sliderRow {
+        display: flex;
+        justify-content: space-between;
+        gap: 8px;
+        font-size: 13px;
+        color: var(--muted);
+        margin-bottom: 6px;
+      }
+      .sliderValue {
+        text-align: center;
+        color: var(--text);
+        font-size: 14px;
+        margin-top: 6px;
+      }
+      input[type="range"] {
+        width: 100%;
+        padding: 0;
+        background: transparent;
+      }
+      .modalActions {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 8px;
+        margin-top: 14px;
+      }
+      .conditionsActions {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 8px;
+        margin-top: 14px;
+      }
+
+      .courseMemoryCard {
+        padding-top: 10px;
+      }
+      .memoryTop {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        margin-bottom: 8px;
+      }
+      .memoryLabel {
+        color: var(--muted);
+        font-size: 13px;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+      }
+      .memoryLink {
+        color: var(--muted);
+        text-decoration: underline;
+        cursor: pointer;
+        font-size: 14px;
+      }
+      .memoryLink:hover {
+        color: var(--text);
+      }
+      .memoryStatus {
+        color: var(--muted);
+        font-size: 13px;
+        margin-bottom: 8px;
+      }
+      .memoryPreview {
+        background: var(--panel2);
+        border-radius: 12px;
+        padding: 10px;
+        white-space: pre-wrap;
+        line-height: 1.35;
+        font-size: 13px;
+        max-height: 220px;
+        overflow: auto;
+      }
+      .memoryEmpty {
+        color: var(--muted);
+        text-align: center;
+        padding: 10px 0;
+      }
+      .memoryActions {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 8px;
+        margin-top: 14px;
+      }
+      #memoryPreviewWrap.hidden {
+        display: none;
+      }
+      .modalBody textarea {
+        width: 100%;
+        min-height: 260px;
+        padding: 12px;
+        border-radius: 10px;
+        border: 1px solid var(--border2);
+        background: #101823;
+        color: var(--text);
+        resize: vertical;
+        font: inherit;
+      }
 
 
-.courseMemoryCard{ padding-top:10px; }
-.memoryTop{
-  display:flex; align-items:center; justify-content:space-between; gap:10px;
-  margin-bottom:8px;
-}
-.memoryLabel{
-  color:var(--muted);
-  font-size:13px;
-  text-transform:uppercase;
-  letter-spacing:.06em;
-}
-.memoryLink{
-  color:var(--muted);
-  text-decoration:underline;
-  cursor:pointer;
-  font-size:14px;
-}
-.memoryLink:hover{ color:var(--text); }
-.memoryStatus{
-  color:var(--muted);
-  font-size:13px;
-  margin-bottom:8px;
-}
-.memoryPreview{
-  background:var(--panel2);
-  border-radius:12px;
-  padding:10px;
-  white-space:pre-wrap;
-  line-height:1.35;
-  font-size:13px;
-  max-height:220px;
-  overflow:auto;
-}
-.memoryEmpty{
-  color:var(--muted);
-  text-align:center;
-  padding:10px 0;
-}
-.memoryActions{
-  display:grid;
-  grid-template-columns:1fr 1fr 1fr;
-  gap:8px;
-  margin-top:14px;
-}
-#memoryPreviewWrap.hidden{ display:none; }
-.modalBody textarea{
-  width:100%;
-  min-height:260px;
-  padding:12px;
-  border-radius:10px;
-  border:1px solid var(--border2);
-  background:#101823;
-  color:var(--text);
-  resize:vertical;
-  font:inherit;
-}
+      .distanceLine {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+      .distanceLabel,
+      .distanceSuffix {
+        white-space: nowrap;
+      }
+      .digitWrap {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .digitBtn {
+        min-width: 42px;
+        padding: 10px 8px;
+        border-radius: 12px;
+        border: 1px solid var(--border2);
+        background: #162131;
+        color: var(--text);
+        font-size: 24px;
+        line-height: 1;
+      }
+      .digitBtn.active {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 1px var(--primary) inset;
+      }
+      .digitPopover {
+        margin-top: 8px;
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 6px;
+      }
+      .digitPopover.hidden {
+        display: none;
+      }
+      .emojiDigit {
+        padding: 10px 0;
+        font-size: 22px;
+        line-height: 1;
+      }
 
-@media (max-width:400px){ .page{ padding:10px 10px 32px; } }
-</style>
-</head>
-<body>
-<header><h1>Golf Tools</h1></header>
+      @media (max-width: 400px) {
+        .page {
+          padding: 10px 10px 32px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header><h1>Golf Tools</h1></header>
 
-<div class="tabBar">
-  <div class="tabBarInner">
-    <button class="tabBtn active" id="tabHaiku">Haiku Runner</button>
-    <button class="tabBtn" id="tabLive">LiveTourney</button>
-  </div>
-</div>
+    <div class="tabBar">
+      <div class="tabBarInner">
+        <button class="tabBtn active" id="tabHaiku">Haiku Runner</button>
+        <button class="tabBtn" id="tabLive">LiveTourney</button>
+      </div>
+    </div>
 
-<div class="page" id="pageHaiku">
-  <div class="keypadBar">
-    <div class="keypadInner">
-      <div class="topRow">
-        <div id="holeShotPill">Hole 1 • Shot 1</div>
-        <div class="topRowRight">
-          <div>Auto-hole: +80</div>
-          <button id="weatherBtn" class="weatherBtn" aria-label="Open conditions">☀️</button>
+    <div class="page" id="pageHaiku">
+      <div class="keypadBar">
+        <div class="keypadInner">
+          <div class="topRow">
+            <div id="holeShotPill">Hole 1 • Shot 1</div>
+            <div class="topRowRight">
+              <div>Auto-hole: +80</div>
+              <button
+                id="weatherBtn"
+                class="weatherBtn"
+                aria-label="Open conditions"
+              >
+                ☀️
+              </button>
+            </div>
+          </div>
+
+          <div class="display hidden" id="display" aria-hidden="true">Enter yards</div>
+
+          <div class="keypadRow hidden" id="pad" aria-hidden="true">
+            <button data-k="1">1</button>
+            <button data-k="2">2</button>
+            <button data-k="3">3</button>
+            <button data-k="4">4</button>
+            <button data-k="5">5</button>
+            <button data-k="6">6</button>
+            <button data-k="7">7</button>
+            <button data-k="8">8</button>
+            <button data-k="9">9</button>
+            <button data-k="0">0</button>
+            <button data-k="⌫">Delete</button>
+            <button data-k="C">Cancel</button>
+            <button class="primary" id="ok">OK</button>
+          </div>
+
+          <div class="statusLine" id="statusText">
+            Hole 1 • Shot 1 • Yards — • Play — • Club —
+          </div>
+          <div class="conditionsSummary" id="conditionsSummary">
+            Wind flat • Hole flat • Green flat
+          </div>
+          <div class="savedLine" id="savedText">
+            Saved locally for this device and day.
+          </div>
         </div>
       </div>
 
-      <div class="display" id="display">Enter yards</div>
-
-      <div class="keypadRow" id="pad">
-        <button data-k="1">1</button>
-        <button data-k="2">2</button>
-        <button data-k="3">3</button>
-        <button data-k="4">4</button>
-        <button data-k="5">5</button>
-        <button data-k="6">6</button>
-        <button data-k="7">7</button>
-        <button data-k="8">8</button>
-        <button data-k="9">9</button>
-        <button data-k="0">0</button>
-        <button data-k="⌫">⌫</button>
-        <button data-k="C">C</button>
-        <button class="primary" id="ok">OK</button>
+      <div class="card">
+        <div class="title" id="title">A.T.T.A.C.H —</div>
       </div>
 
-      <div class="statusLine" id="statusText">Hole 1 • Shot 1 • Yards — • Play — • Club —</div>
-      <div class="conditionsSummary" id="conditionsSummary">Wind flat • Hole flat • Green flat</div>
-      <div class="savedLine" id="savedText">Saved locally for this device and day.</div>
-    </div>
-  </div>
+      <div class="card" id="haiku"></div>
 
-  <div class="card">
-    <div class="title" id="title">A.T.T.A.C.H  —</div>
-  </div>
+      <div class="card hidden" id="digitPopoverCard">
+        <div class="logTitle" id="digitPopoverTitle">Set next-shot digit</div>
+        <div class="digitPopover" id="digitPopover"></div>
+      </div>
 
-  <div class="card" id="haiku"></div>
+      <div class="card courseMemoryCard">
+        <div class="memoryTop">
+          <div class="memoryLabel">Course memory</div>
+          <div style="display: flex; align-items: center; gap: 12px">
+            <a id="toggleMdLink" class="memoryLink">Show</a>
+            <a id="openMdLink" class="memoryLink">Paste / edit MD</a>
+          </div>
+        </div>
+        <div class="memoryStatus" id="memoryStatus">
+          Olympia strategy loaded.
+        </div>
+        <div id="memoryPreviewWrap" class="hidden">
+          <div class="memoryPreview" id="memoryPreview"></div>
+        </div>
+      </div>
 
-
-  <div class="card courseMemoryCard">
-    <div class="memoryTop">
-      <div class="memoryLabel">Course memory</div>
-      <div style="display:flex; align-items:center; gap:12px;">
-        <a id="toggleMdLink" class="memoryLink">Show</a>
-        <a id="openMdLink" class="memoryLink">Paste / edit MD</a>
+      <div class="card">
+        <div class="logTitle" id="logTitle">SHOT LOG (0 shots)</div>
+        <div id="log"><div class="empty">No shots logged yet.</div></div>
+        <div class="logFooter">
+          <a id="clearLink" class="clearLink">Clear and start over</a>
+        </div>
       </div>
     </div>
-    <div class="memoryStatus" id="memoryStatus">Olympia strategy loaded.</div>
-    <div id="memoryPreviewWrap" class="hidden">
-      <div class="memoryPreview" id="memoryPreview"></div>
-    </div>
-  </div>
 
-  <div class="card">
-    <div class="logTitle" id="logTitle">SHOT LOG (0 shots)</div>
-    <div id="log"><div class="empty">No shots logged yet.</div></div>
-    <div class="logFooter">
-      <a id="clearLink" class="clearLink">Clear and start over</a>
-    </div>
-  </div>
-</div>
+    <div class="page hidden" id="pageLive">
+      <div class="card">
+        <div class="title" style="font-size: 22px">LiveTourney</div>
+        <div class="liveControls">
+          <input
+            id="liveUrl"
+            type="url"
+            placeholder="Paste scorecard URL"
+            inputmode="url"
+            autocomplete="off"
+          />
+          <button class="primary" id="loadLiveUrl">Load scorecard</button>
+          <div class="liveHint">
+            Paste your LiveTourney scorecard URL, then tap Load scorecard. Some
+            sites block embedding in an iframe, so the frame may stay blank.
+          </div>
+          <div class="liveStatus" id="liveStatus">No URL loaded.</div>
+        </div>
+      </div>
 
-<div class="page hidden" id="pageLive">
-  <div class="card">
-    <div class="title" style="font-size:22px;">LiveTourney</div>
-    <div class="liveControls">
-      <input id="liveUrl" type="url" placeholder="Paste scorecard URL" inputmode="url" autocomplete="off" />
-      <button class="primary" id="loadLiveUrl">Load scorecard</button>
-      <div class="liveHint">Paste your LiveTourney scorecard URL, then tap Load scorecard. Some sites block embedding in an iframe, so the frame may stay blank.</div>
-      <div class="liveStatus" id="liveStatus">No URL loaded.</div>
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="iframeWrap">
-      <iframe id="liveFrame" title="LiveTourney scorecard"></iframe>
-    </div>
-  </div>
-</div>
-
-<div class="modalBackdrop hidden" id="weatherModal" aria-hidden="true">
-  <div class="modal">
-    <div class="modalHeader">
-      <div>
-        <div class="modalTitle">Conditions</div>
-        <div class="modalSub">Wind only affects shots above 40 yards. Putts use green slope only.</div>
-      </div>
-      <button id="closeWeather" class="iconBtn" aria-label="Close conditions">✕</button>
-    </div>
-    <div class="modalBody">
-      <div class="sliderGroup">
-        <div class="sliderRow"><span>Helping</span><span>Wind</span><span>Hurting</span></div>
-        <input id="windSlider" type="range" min="-4" max="4" step="1" value="0" />
-        <div class="sliderValue" id="windValue">Wind flat</div>
-      </div>
-      <div class="sliderGroup">
-        <div class="sliderRow"><span>Downhill</span><span>Hole</span><span>Uphill</span></div>
-        <input id="holeSlider" type="range" min="-4" max="4" step="1" value="0" />
-        <div class="sliderValue" id="holeValue">Hole flat</div>
-      </div>
-      <div class="sliderGroup">
-        <div class="sliderRow"><span>Downhill</span><span>Green</span><span>Uphill</span></div>
-        <input id="greenSlider" type="range" min="-4" max="4" step="1" value="0" />
-        <div class="sliderValue" id="greenValue">Green flat</div>
-      </div>
-      <div class="sliderHint" id="conditionsRuleText">Putts use green only. 11–40 yards uses hole and green. Above 40 uses all three.</div>
-      <div class="conditionsActions">
-        <button class="primary" id="saveWeather">Save</button>
+      <div class="card">
+        <div class="iframeWrap">
+          <iframe id="liveFrame" title="LiveTourney scorecard"></iframe>
+        </div>
       </div>
     </div>
-  </div>
-</div>
 
-<div class="modalBackdrop hidden" id="editModal" aria-hidden="true">
-  <div class="modal">
-    <div class="modalHeader">
-      <div>
-        <div class="modalTitle">Edit shot</div>
-        <div class="modalSub" id="editShotMeta">Hole 1 • Shot 1 • —</div>
+    <div class="modalBackdrop hidden" id="weatherModal" aria-hidden="true">
+      <div class="modal">
+        <div class="modalHeader">
+          <div>
+            <div class="modalTitle">Conditions</div>
+            <div class="modalSub">
+              Wind only affects shots above 40 yards. Putts use green slope
+              only.
+            </div>
+          </div>
+          <button
+            id="closeWeather"
+            class="iconBtn"
+            aria-label="Close conditions"
+          >
+            ✕
+          </button>
+        </div>
+        <div class="modalBody">
+          <div class="sliderGroup">
+            <div class="sliderRow">
+              <span>Helping</span><span>Wind</span><span>Hurting</span>
+            </div>
+            <input
+              id="windSlider"
+              type="range"
+              min="-4"
+              max="4"
+              step="1"
+              value="0"
+            />
+            <div class="sliderValue" id="windValue">Wind flat</div>
+          </div>
+          <div class="sliderGroup">
+            <div class="sliderRow">
+              <span>Downhill</span><span>Hole</span><span>Uphill</span>
+            </div>
+            <input
+              id="holeSlider"
+              type="range"
+              min="-4"
+              max="4"
+              step="1"
+              value="0"
+            />
+            <div class="sliderValue" id="holeValue">Hole flat</div>
+          </div>
+          <div class="sliderGroup">
+            <div class="sliderRow">
+              <span>Downhill</span><span>Green</span><span>Uphill</span>
+            </div>
+            <input
+              id="greenSlider"
+              type="range"
+              min="-4"
+              max="4"
+              step="1"
+              value="0"
+            />
+            <div class="sliderValue" id="greenValue">Green flat</div>
+          </div>
+          <div class="sliderHint" id="conditionsRuleText">
+            Putts use green only. 11–40 yards uses hole and green. Above 40 uses
+            all three.
+          </div>
+          <div class="conditionsActions">
+            <button class="primary" id="saveWeather">Save</button>
+          </div>
+        </div>
       </div>
-      <button id="closeEdit" class="iconBtn" aria-label="Close editor">✕</button>
     </div>
-    <div class="modalBody">
-      <input id="editDistance" type="number" min="1" step="1" inputmode="numeric" placeholder="Distance" />
-      <div class="modalSub" style="margin-top:8px;">This keeps the shot’s saved conditions, then recomputes hole and shot numbering.</div>
-      <div class="modalActions">
-        <button class="primary" id="saveEdit">Save</button>
-        <button class="secondaryBtn" id="cancelEdit">Cancel</button>
-        <button class="dangerBtn" id="deleteEdit">Delete</button>
+
+    <div class="modalBackdrop hidden" id="editModal" aria-hidden="true">
+      <div class="modal">
+        <div class="modalHeader">
+          <div>
+            <div class="modalTitle">Edit shot</div>
+            <div class="modalSub" id="editShotMeta">Hole 1 • Shot 1 • —</div>
+          </div>
+          <button id="closeEdit" class="iconBtn" aria-label="Close editor">
+            ✕
+          </button>
+        </div>
+        <div class="modalBody">
+          <input
+            id="editDistance"
+            type="number"
+            min="1"
+            step="1"
+            inputmode="numeric"
+            placeholder="Distance"
+          />
+          <div class="modalSub" style="margin-top: 8px">
+            This keeps the shot’s saved conditions, then recomputes hole and
+            shot numbering.
+          </div>
+          <div class="modalActions">
+            <button class="primary" id="saveEdit">Save</button>
+            <button class="secondaryBtn" id="cancelEdit">Cancel</button>
+            <button class="dangerBtn" id="deleteEdit">Delete</button>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-</div>
 
-
-<div class="modalBackdrop hidden" id="mdModal" aria-hidden="true">
-  <div class="modal">
-    <div class="modalHeader">
-      <div>
-        <div class="modalTitle">Course markdown</div>
-        <div class="modalSub">Paste course strategy markdown here so it stays in memory on this device.</div>
+    <div class="modalBackdrop hidden" id="mdModal" aria-hidden="true">
+      <div class="modal">
+        <div class="modalHeader">
+          <div>
+            <div class="modalTitle">Course markdown</div>
+            <div class="modalSub">
+              Paste course strategy markdown here so it stays in memory on this
+              device.
+            </div>
+          </div>
+          <button
+            id="closeMd"
+            class="iconBtn"
+            aria-label="Close markdown editor"
+          >
+            ✕
+          </button>
+        </div>
+        <div class="modalBody">
+          <textarea
+            id="mdTextarea"
+            placeholder="Paste course markdown here"
+          ></textarea>
+          <div class="modalSub" style="margin-top: 8px">
+            This is saved locally with the app settings and reloads on startup.
+          </div>
+          <div class="memoryActions">
+            <button class="primary" id="saveMd">Save</button>
+            <button class="secondaryBtn" id="cancelMd">Cancel</button>
+            <button class="dangerBtn" id="clearMd">Clear</button>
+          </div>
+        </div>
       </div>
-      <button id="closeMd" class="iconBtn" aria-label="Close markdown editor">✕</button>
     </div>
-    <div class="modalBody">
-      <textarea id="mdTextarea" placeholder="Paste course markdown here"></textarea>
-      <div class="modalSub" style="margin-top:8px;">This is saved locally with the app settings and reloads on startup.</div>
-      <div class="memoryActions">
-        <button class="primary" id="saveMd">Save</button>
-        <button class="secondaryBtn" id="cancelMd">Cancel</button>
-        <button class="dangerBtn" id="clearMd">Clear</button>
-      </div>
-    </div>
-  </div>
-</div>
 
-<script>
-const clubs=[
-  ["D",245],["3",230],["H",205],["4",175],["5",165],
-  ["6",155],["7",145],["8",135],["9",120],
-  ["P",105],["G",95],["S",75],["L",65]
-];
-const CLUB_YARD_ADJUSTMENT=10;
-const SHORT_GAME_THRESHOLD=40;
-const DB="golfToolsDB";
-const ROUND_STORE="rounds";
-const SETTINGS_STORE="settings";
-const LOCAL_PREFIX="golf-tools-backup";
+    <script>
+      const clubs = [
+        ["D", 245],
+        ["3", 230],
+        ["H", 205],
+        ["4", 175],
+        ["5", 165],
+        ["6", 155],
+        ["7", 145],
+        ["8", 135],
+        ["9", 120],
+        ["P", 105],
+        ["G", 95],
+        ["S", 75],
+        ["L", 65],
+      ];
+      const CLUB_YARD_ADJUSTMENT = 10;
+      const SHORT_GAME_THRESHOLD = 40;
+      const DB = "golfToolsDB";
+      const ROUND_STORE = "rounds";
+      const SETTINGS_STORE = "settings";
+      const LOCAL_PREFIX = "golf-tools-backup";
 
-let db;
-let input="";
-let last=null;
-let shots=[];
-let activeTab="haiku";
-let liveUrlValue="";
-let windClubs=0;
-let holeClubs=0;
-let greenClubs=0;
-let draftWindClubs=0;
-let draftHoleClubs=0;
-let draftGreenClubs=0;
-let editingShotId=null;
-let savePulseTimer=null;
-let shedPulseTimer=null;
-const DEFAULT_COURSE_MD='# Course Details\n**Name**: Olympia Country & Golf Club\n**Tee Played**: White\n**Player Strategy**: Play to 120 yards whenever unsure. Driver ~250 (cut). 120 yard club = PW.\n\n---\n\n## Course Strategy Overview\n- Default goal: **leave 120 yards in**\n- When in doubt: **lay up to 120**\n- Favor position over distance\n- Avoid penalty areas at all costs\n\n---\n\n## Hole-by-Hole Strategy (White Tees)\n\n### Hole 1 – Par 4 – 225\n**Plan**: Easy start  \n**Play**: Iron or hybrid ~100–120  \n**Approach**: Full PW  \n\n---\n\n### Hole 2 – Par 3 – 110\n**Plan**: Direct  \n**Play**: Smooth PW  \n\n---\n\n### Hole 3 – Par 4 – 364\n**Plan**: Position first  \n**Play**: Driver (~250) → leaves ~110  \n**Approach**: PW  \n\n---\n\n### Hole 4 – Par 4 – 366\n**Plan**: Tough hole  \n**Play**: Driver  \n**Miss**: Favor safe side  \n**Approach**: Likely 120+  \n\n---\n\n### Hole 5 – Par 4 – 258\n**Plan**: Avoid left  \n**Play**: Lay up to 120 (iron ~140)  \n**Approach**: PW  \n\n---\n\n### Hole 6 – Par 5 – 463\n**Plan**: 3-shot hole  \n**Play**: Driver → layup → 120  \n**Approach**: PW  \n\n---\n\n### Hole 7 – Par 5 – 481\n**Plan**: Same as 6  \n**Play**: Driver → layup → 120  \n\n---\n\n### Hole 8 – Par 3 – 188\n**Plan**: Center of green  \n**Play**: Long iron/hybrid  \n\n---\n\n### Hole 9 – Par 3 – 133\n**Plan**: Slightly longer wedge  \n**Play**: Controlled PW  \n\n---\n\n### Hole 10 – Par 4 – 310\n**Plan**: Position > distance  \n**Play**: Lay up to 120  \n**Avoid**: Trouble areas  \n\n---\n\n### Hole 11 – Par 4 – 407\n**Plan**: Driver hole  \n**Play**: Driver → mid iron  \n\n---\n\n### Hole 12 – Par 4 – 417\n**Plan**: Hardest hole  \n**Play**: Driver → take medicine  \n**Goal**: Bogey OK  \n\n---\n\n### Hole 13 – Par 3 – 150\n**Plan**: Middle of green  \n**Play**: 7–8 iron  \n\n---\n\n### Hole 14 – Par 5 – 505\n**Plan**: Scoring chance  \n**Play**: Driver → layup → 120  \n\n---\n\n### Hole 15 – Par 5 – 466\n**Plan**: Same pattern  \n**Play**: Driver → layup → 120  \n\n---\n\n### Hole 16 – Par 4 – 399\n**Plan**: Solid drive  \n**Play**: Driver → approach  \n\n---\n\n### Hole 17 – Par 3 – 160\n**Plan**: Avoid water  \n**Play**: Club up if unsure  \n\n---\n\n### Hole 18 – Par 4 – 437\n**Plan**: Finish strong  \n**Play**: Driver → approach  \n**Miss**: Safe side  \n\n---\n\n## Mental Game\n- SHED after every shot  \n- Commit fully  \n- Play to your number (120)';
-let courseMarkdown=DEFAULT_COURSE_MD;
-let draftCourseMarkdown=DEFAULT_COURSE_MD;
-let isMemoryExpanded=false;
+      let db;
+      let input = "";
+      let last = null;
+      let shots = [];
+      let nextHaikuDistance = 0;
+      let nextHaikuTokens = ["up", "up", "0"];
+      let activeDigitIndex = null;
+      let activeTab = "haiku";
+      let liveUrlValue = "";
+      let windClubs = 0;
+      let holeClubs = 0;
+      let greenClubs = 0;
+      let draftWindClubs = 0;
+      let draftHoleClubs = 0;
+      let draftGreenClubs = 0;
+      let editingShotId = null;
+      let savePulseTimer = null;
+      let shedPulseTimer = null;
+      const DEFAULT_COURSE_MD =
+        "# Course Details\n**Name**: Olympia Country & Golf Club\n**Tee Played**: White\n**Player Strategy**: Play to 120 yards whenever unsure. Driver ~250 (cut). 120 yard club = PW.\n\n---\n\n## Course Strategy Overview\n- Default goal: **leave 120 yards in**\n- When in doubt: **lay up to 120**\n- Favor position over distance\n- Avoid penalty areas at all costs\n\n---\n\n## Hole-by-Hole Strategy (White Tees)\n\n### Hole 1 – Par 4 – 225\n**Plan**: Easy start  \n**Play**: Iron or hybrid ~100–120  \n**Approach**: Full PW  \n\n---\n\n### Hole 2 – Par 3 – 110\n**Plan**: Direct  \n**Play**: Smooth PW  \n\n---\n\n### Hole 3 – Par 4 – 364\n**Plan**: Position first  \n**Play**: Driver (~250) → leaves ~110  \n**Approach**: PW  \n\n---\n\n### Hole 4 – Par 4 – 366\n**Plan**: Tough hole  \n**Play**: Driver  \n**Miss**: Favor safe side  \n**Approach**: Likely 120+  \n\n---\n\n### Hole 5 – Par 4 – 258\n**Plan**: Avoid left  \n**Play**: Lay up to 120 (iron ~140)  \n**Approach**: PW  \n\n---\n\n### Hole 6 – Par 5 – 463\n**Plan**: 3-shot hole  \n**Play**: Driver → layup → 120  \n**Approach**: PW  \n\n---\n\n### Hole 7 – Par 5 – 481\n**Plan**: Same as 6  \n**Play**: Driver → layup → 120  \n\n---\n\n### Hole 8 – Par 3 – 188\n**Plan**: Center of green  \n**Play**: Long iron/hybrid  \n\n---\n\n### Hole 9 – Par 3 – 133\n**Plan**: Slightly longer wedge  \n**Play**: Controlled PW  \n\n---\n\n### Hole 10 – Par 4 – 310\n**Plan**: Position > distance  \n**Play**: Lay up to 120  \n**Avoid**: Trouble areas  \n\n---\n\n### Hole 11 – Par 4 – 407\n**Plan**: Driver hole  \n**Play**: Driver → mid iron  \n\n---\n\n### Hole 12 – Par 4 – 417\n**Plan**: Hardest hole  \n**Play**: Driver → take medicine  \n**Goal**: Bogey OK  \n\n---\n\n### Hole 13 – Par 3 – 150\n**Plan**: Middle of green  \n**Play**: 7–8 iron  \n\n---\n\n### Hole 14 – Par 5 – 505\n**Plan**: Scoring chance  \n**Play**: Driver → layup → 120  \n\n---\n\n### Hole 15 – Par 5 – 466\n**Plan**: Same pattern  \n**Play**: Driver → layup → 120  \n\n---\n\n### Hole 16 – Par 4 – 399\n**Plan**: Solid drive  \n**Play**: Driver → approach  \n\n---\n\n### Hole 17 – Par 3 – 160\n**Plan**: Avoid water  \n**Play**: Club up if unsure  \n\n---\n\n### Hole 18 – Par 4 – 437\n**Plan**: Finish strong  \n**Play**: Driver → approach  \n**Miss**: Safe side  \n\n---\n\n## Mental Game\n- SHED after every shot  \n- Commit fully  \n- Play to your number (120)";
+      let courseMarkdown = DEFAULT_COURSE_MD;
+      let draftCourseMarkdown = DEFAULT_COURSE_MD;
+      let isMemoryExpanded = false;
 
-function club(y){
-  if(y<=10) return "putt";
-  let best=clubs[0];
-  let diff=Math.abs(y-best[1]);
-  for(const c of clubs){
-    const d=Math.abs(y-c[1]);
-    if(d<diff){ best=c; diff=d; }
-  }
-  return best[0];
-}
-
-function haiku(){
-  return [
-    "Coils. High. Address tall.",
-    "E(ye) Z(en) 1 2 3 4 High",
-    "Distance "
-  ];
-}
-
-function windSummary(value=windClubs){
-  if(value===0) return "Wind flat";
-  return value < 0 ? `Wind helping ${Math.abs(value)}` : `Wind hurting ${value}`;
-}
-function holeSummary(value=holeClubs){
-  if(value===0) return "Hole flat";
-  return value < 0 ? `Hole downhill ${Math.abs(value)}` : `Hole uphill ${value}`;
-}
-function greenSummary(value=greenClubs){
-  if(value===0) return "Green flat";
-  return value < 0 ? `Green downhill ${Math.abs(value)}` : `Green uphill ${value}`;
-}
-function conditionsSummaryText(w=windClubs,h=holeClubs,g=greenClubs){
-  return `${windSummary(w)} • ${holeSummary(h)} • ${greenSummary(g)}`;
-}
-
-function applicableConditionClubs(y, w=windClubs, h=holeClubs, g=greenClubs){
-  const rawYards=Number(y) || 0;
-  if(rawYards<=10) return 0;
-  const slope=h+g;
-  if(rawYards<=SHORT_GAME_THRESHOLD) return slope;
-  return w+slope;
-}
-function adjustedYards(y, w=windClubs, h=holeClubs, g=greenClubs){
-  const rawYards=Number(y) || 0;
-
-  if(rawYards<=10){
-    let adjusted=rawYards;
-    if(g>0){
-      adjusted = rawYards + (g * 4);
-    }else if(g<0){
-      adjusted = rawYards * Math.pow(0.5, Math.abs(g));
-    }
-    return Math.max(1, Math.round(adjusted));
-  }
-
-  if(rawYards<=SHORT_GAME_THRESHOLD){
-    return Math.max(1, Math.round(rawYards + ((h+g) * CLUB_YARD_ADJUSTMENT)));
-  }
-
-  return Math.max(1, Math.round(rawYards + ((w+h+g) * CLUB_YARD_ADJUSTMENT)));
-}
-function shotRuleText(y){
-  const rawYards=Number(y)||0;
-  if(rawYards<=10){
-    return "Putts use green slope only: uphill adds 4 yards per step, downhill halves distance per step.";
-  }
-  if(rawYards<=SHORT_GAME_THRESHOLD){
-    return `Play distance uses hole and green slope only at ${SHORT_GAME_THRESHOLD} yards and in.`;
-  }
-  return `Play distance uses wind, hole slope, and green slope above ${SHORT_GAME_THRESHOLD} yards.`;
-}
-
-function getDeviceId(){
-  let id=localStorage.getItem("golfToolsDeviceId");
-  if(!id){
-    id=(crypto.randomUUID ? crypto.randomUUID() : "dev-"+Date.now()+"-"+Math.random().toString(16).slice(2));
-    localStorage.setItem("golfToolsDeviceId", id);
-  }
-  return id;
-}
-function getTodayKey(){
-  const d=new Date();
-  const y=d.getFullYear();
-  const m=String(d.getMonth()+1).padStart(2,"0");
-  const day=String(d.getDate()).padStart(2,"0");
-  return `${getDeviceId()}-${y}-${m}-${day}`;
-}
-function localRoundKey(){ return `${LOCAL_PREFIX}-round-${getTodayKey()}`; }
-function localSettingsKey(){ return `${LOCAL_PREFIX}-settings-${getDeviceId()}`; }
-function roundState(){ return { input, last, shots }; }
-function settingsState(){ return { activeTab, liveUrlValue, windClubs, holeClubs, greenClubs, courseMarkdown, isMemoryExpanded }; }
-
-function saveLocalFallback(){
-  try{
-    localStorage.setItem(localRoundKey(), JSON.stringify(roundState()));
-    localStorage.setItem(localSettingsKey(), JSON.stringify(settingsState()));
-  }catch(e){ console.error("local backup save failed", e); }
-}
-function loadLocalFallback(){
-  let round=null, settings=null;
-  try{ round=JSON.parse(localStorage.getItem(localRoundKey()) || "null"); }catch(e){}
-  try{ settings=JSON.parse(localStorage.getItem(localSettingsKey()) || "null"); }catch(e){}
-  return { round, settings };
-}
-
-function openDB(){
-  return new Promise((resolve,reject)=>{
-    const req=indexedDB.open(DB,1);
-    req.onupgradeneeded=e=>{
-      const dbase=e.target.result;
-      if(!dbase.objectStoreNames.contains(ROUND_STORE)) dbase.createObjectStore(ROUND_STORE,{keyPath:"id"});
-      if(!dbase.objectStoreNames.contains(SETTINGS_STORE)) dbase.createObjectStore(SETTINGS_STORE,{keyPath:"id"});
-    };
-    req.onsuccess=()=>{ db=req.result; resolve(); };
-    req.onerror=()=>reject(req.error);
-  });
-}
-function saveToIndexedDB(){
-  if(!db) return;
-  const tx=db.transaction([ROUND_STORE, SETTINGS_STORE],"readwrite");
-  tx.objectStore(ROUND_STORE).put({ id:getTodayKey(), state:roundState(), updatedAt:Date.now() });
-  tx.objectStore(SETTINGS_STORE).put({ id:getDeviceId(), state:settingsState(), updatedAt:Date.now() });
-}
-function loadRoundFromIndexedDB(){
-  return new Promise((resolve,reject)=>{
-    if(!db){ resolve(null); return; }
-    const req=db.transaction(ROUND_STORE,"readonly").objectStore(ROUND_STORE).get(getTodayKey());
-    req.onsuccess=()=>resolve(req.result || null);
-    req.onerror=()=>reject(req.error);
-  });
-}
-function loadSettingsFromIndexedDB(){
-  return new Promise((resolve,reject)=>{
-    if(!db){ resolve(null); return; }
-    const req=db.transaction(SETTINGS_STORE,"readonly").objectStore(SETTINGS_STORE).get(getDeviceId());
-    req.onsuccess=()=>resolve(req.result || null);
-    req.onerror=()=>reject(req.error);
-  });
-}
-function deleteTodayFromIndexedDB(){
-  return new Promise((resolve,reject)=>{
-    if(!db){ resolve(); return; }
-    const req=db.transaction(ROUND_STORE,"readwrite").objectStore(ROUND_STORE).delete(getTodayKey());
-    req.onsuccess=()=>resolve();
-    req.onerror=()=>reject(req.error);
-  });
-}
-function saveAll(){ saveLocalFallback(); saveToIndexedDB(); pulseSaved(); }
-function pulseSaved(){
-  const el=document.getElementById("savedText");
-  el.innerText="Saved ✓";
-  clearTimeout(savePulseTimer);
-  savePulseTimer=setTimeout(()=>{ el.innerText="Saved locally for this device and day."; },1200);
-}
-
-function nextPosition(y, previousShot=last){
-  if(!previousShot) return { hole:1, shot:1 };
-  if(typeof y === "number" && Number.isFinite(y) && y > previousShot.yards + 80){
-    return { hole:previousShot.hole + 1, shot:1 };
-  }
-  return { hole:previousShot.hole, shot:previousShot.shot + 1 };
-}
-
-function makeShot(yards, shotConditions, position){
-  const playYards=adjustedYards(yards, shotConditions.windClubs, shotConditions.holeClubs, shotConditions.greenClubs);
-  return {
-    id: crypto.randomUUID ? crypto.randomUUID() : 'shot-'+Date.now()+'-'+Math.random().toString(16).slice(2),
-    hole: position.hole,
-    shot: position.shot,
-    yards,
-    playYards,
-    club: club(playYards),
-    windClubs: shotConditions.windClubs,
-    holeClubs: shotConditions.holeClubs,
-    greenClubs: shotConditions.greenClubs
-  };
-}
-
-function recomputeShots(){
-  const chronological=[...shots].reverse();
-  const rebuilt=[];
-  let previous=null;
-  chronological.forEach(existing=>{
-    const yards=Number(existing && existing.yards);
-    if(!Number.isFinite(yards) || yards<=0) return;
-    const shotConditions={
-      windClubs:Number.isFinite(Number(existing && existing.windClubs)) ? Number(existing.windClubs) : 0,
-      holeClubs:Number.isFinite(Number(existing && existing.holeClubs)) ? Number(existing.holeClubs) : 0,
-      greenClubs:Number.isFinite(Number(existing && existing.greenClubs)) ? Number(existing.greenClubs) : 0
-    };
-    const pos=nextPosition(yards, previous);
-    const playYards=adjustedYards(yards, shotConditions.windClubs, shotConditions.holeClubs, shotConditions.greenClubs);
-    const shot={
-      id: existing.id || (crypto.randomUUID ? crypto.randomUUID() : 'shot-'+Date.now()+'-'+Math.random().toString(16).slice(2)),
-      hole: pos.hole,
-      shot: pos.shot,
-      yards,
-      playYards,
-      club: club(playYards),
-      windClubs: shotConditions.windClubs,
-      holeClubs: shotConditions.holeClubs,
-      greenClubs: shotConditions.greenClubs
-    };
-    rebuilt.push(shot);
-    previous=shot;
-  });
-  shots=rebuilt.reverse();
-  last=shots.length ? shots[0] : null;
-}
-
-function currentProjected(){
-  const y=input ? Number(input) : null;
-  if(Number.isFinite(y) && y>0) return nextPosition(y);
-  if(last) return nextPosition();
-  return { hole:1, shot:1 };
-}
+      function club(y) {
+        if (y <= 10) return "putt";
+        let best = clubs[0];
+        let diff = Math.abs(y - best[1]);
+        for (const c of clubs) {
+          const d = Math.abs(y - c[1]);
+          if (d < diff) {
+            best = c;
+            diff = d;
+          }
+        }
+        return best[0];
+      }
 
 
-function summarizeMarkdown(md){
-  const text=(md || "").trim();
-  if(!text) return { status:"No course markdown loaded.", preview:"" };
-  const lines=text.split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
-  const titleLine=lines.find(line=>line.startsWith("# ")) || "";
-  const heading=titleLine ? titleLine.replace(/^#\s+/, "") : "Course markdown loaded.";
-  return { status:heading, preview:text };
-}
-function getCurrentHoleNumber(){
-  const projected=currentProjected();
-  return projected && projected.hole ? projected.hole : 1;
-}
-function extractHoleSection(md, holeNumber){
-  const text=(md || "").trim();
-  if(!text) return "";
-  const normalized=text.replace(/\r\n/g, "\n");
-  const headingRegex=new RegExp("^###\\s+Hole\\s+" + holeNumber + "\\b.*$", "mi");
-  const match=normalized.match(headingRegex);
-  if(!match) return "";
-  const start=match.index;
-  const rest=normalized.slice(start);
-  const afterHeading=rest.slice(match[0].length);
-  const nextMatch=afterHeading.match(/\n###\s+Hole\s+\d+\b/i);
-  if(nextMatch){
-    return rest.slice(0, match[0].length + nextMatch.index).trim();
-  }
-  return rest.trim();
-}
-function renderCourseMemory(){
-  const summary=summarizeMarkdown(courseMarkdown);
-  const statusEl=document.getElementById("memoryStatus");
-  const previewEl=document.getElementById("memoryPreview");
-  const previewWrap=document.getElementById("memoryPreviewWrap");
-  const toggleEl=document.getElementById("toggleMdLink");
-  const currentHole=getCurrentHoleNumber();
-  const holeSection=extractHoleSection(courseMarkdown, currentHole);
-  const hasMarkdown=!!(courseMarkdown && courseMarkdown.trim());
+      function defaultNextHaikuTokens() {
+        return ["up", "up", "0"];
+      }
+      function keycapDigit(value) {
+        const digits = ["0️⃣", "1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣", "7️⃣", "8️⃣", "9️⃣"];
+        const n = Number(value);
+        return Number.isInteger(n) && n >= 0 && n <= 9 ? digits[n] : "0️⃣";
+      }
 
-  statusEl.innerText=hasMarkdown ? `${summary.status} • Hole ${currentHole}` : summary.status;
+      function tokenEmoji(token, index) {
+        const value = String(token ?? "");
+        if (/^[0-9]$/.test(value)) return keycapDigit(value);
+        if (value === "up") return "⬆️";
+        if (value === "down") return "⬇️";
+        if (value === "grass") return "🌿";
+        return index === 2 ? "🌿" : "▫️";
+      }
 
-  if(holeSection){
-    previewEl.innerText=holeSection;
-    previewEl.classList.remove("memoryEmpty");
-  }else if(hasMarkdown){
-    previewEl.innerText=`No section found for Hole ${currentHole}. Add a markdown heading like "### Hole ${currentHole}".`;
-    previewEl.classList.add("memoryEmpty");
-  }else{
-    previewEl.innerText="Paste course markdown to keep hole strategy in memory.";
-    previewEl.classList.add("memoryEmpty");
-  }
+      function normalizeDigitToken(token, index) {
+        const value = String(token ?? "").trim();
+        if (/^[0-9]$/.test(value)) return value;
+        if (index < 2 && (value === "up" || value === "down")) return value;
+        if (index === 2 && value === "grass") return "grass";
+        return "";
+      }
 
-  toggleEl.innerText=isMemoryExpanded ? "Hide" : "Show";
-  toggleEl.style.visibility=hasMarkdown ? "visible" : "hidden";
-  previewWrap.classList.toggle("hidden", !hasMarkdown || !isMemoryExpanded);
-}
-function toggleCourseMemory(){
-  isMemoryExpanded=!isMemoryExpanded;
-  renderCourseMemory();
-  saveAll();
-}
-function openMdModal(){
-  draftCourseMarkdown=courseMarkdown || "";
-  document.getElementById("mdTextarea").value=draftCourseMarkdown;
-  document.getElementById("mdModal").classList.remove("hidden");
-}
-function closeMdModal(){
-  document.getElementById("mdModal").classList.add("hidden");
-}
-function saveMarkdownMemory(){
-  courseMarkdown=(document.getElementById("mdTextarea").value || "").trim();
-  isMemoryExpanded=false;
-  renderCourseMemory();
-  saveAll();
-  closeMdModal();
-}
-function clearMarkdownMemory(){
-  const ok=confirm("Clear saved course markdown from memory on this device?");
-  if(!ok) return;
-  courseMarkdown="";
-  isMemoryExpanded=false;
-  document.getElementById("mdTextarea").value="";
-  renderCourseMemory();
-  saveAll();
-  closeMdModal();
-}
+      function clampDistance(value) {
+        const n = Number(value);
+        if (!Number.isFinite(n) || n < 0) return 0;
+        return Math.max(0, Math.min(999, Math.round(n)));
+      }
 
-function renderHaiku(triggerShedPulse=false){
-  const yPreview=input ? Number(input) : null;
-  const hasPreview=Number.isFinite(yPreview) && yPreview>0;
-  const projected=currentProjected();
-  const previewAdjusted=hasPreview ? adjustedYards(yPreview) : null;
-  const previewClub=hasPreview ? club(previewAdjusted) : "—";
+      function tokensFromDistance(value) {
+        const safe = clampDistance(value);
+        if (!safe) return defaultNextHaikuTokens();
+        const parts = String(safe).split("");
+        const slots = ["", "", ""];
+        const offset = 3 - parts.length;
+        parts.forEach((part, i) => {
+          slots[offset + i] = part;
+        });
+        return slots;
+      }
 
-  document.getElementById("display").innerText=input || "Enter yards";
-  document.getElementById("holeShotPill").innerText=`Hole ${projected.hole} • Shot ${projected.shot}`;
-  document.getElementById("statusText").innerText=`Hole ${projected.hole} • Shot ${projected.shot} • Yards ${hasPreview ? yPreview : "—"} • Play ${hasPreview ? previewAdjusted : "—"} • Club ${hasPreview ? previewClub : "—"}`;
-  document.getElementById("conditionsSummary").innerText=conditionsSummaryText();
-  document.getElementById("title").innerText=last ? `Attached ${last.club}` : "Attached —";
+      function normalizeStoredTokens(tokens) {
+        if (!Array.isArray(tokens)) return null;
+        const normalized = [0, 1, 2].map((index) =>
+          normalizeDigitToken(tokens[index], index),
+        );
+        const hasAny = normalized.some((token) => token !== "");
+        return hasAny ? normalized : defaultNextHaikuTokens();
+      }
 
-  const h=document.getElementById("haiku");
-  h.innerHTML="";
-  haiku().forEach((line, index)=>{
-    const d=document.createElement("div");
-    d.className="line" + (index===2 ? " shedLine" : "");
-    d.innerText=line;
-    if(index===2 && triggerShedPulse){
-      d.classList.add("shedPulse");
-      clearTimeout(shedPulseTimer);
-      shedPulseTimer=setTimeout(()=>d.classList.remove("shedPulse"), 900);
-    }
-    h.appendChild(d);
-  });
+      function syncTokensFromDistanceIfNeeded() {
+        const normalized = normalizeStoredTokens(nextHaikuTokens);
+        if (normalized) {
+          nextHaikuTokens = normalized;
+          return;
+        }
+        nextHaikuTokens = tokensFromDistance(nextHaikuDistance);
+      }
 
-  document.getElementById("logTitle").innerText=`SHOT LOG (${shots.length} ${shots.length===1 ? "shot" : "shots"})`;
-  const log=document.getElementById("log");
-  log.innerHTML="";
-  if(!shots.length){
-    const d=document.createElement("div");
-    d.className="empty";
-    d.innerText="No shots logged yet.";
-    log.appendChild(d);
-  } else {
-    shots.forEach(s=>{
-      const d=document.createElement("div");
-      d.className="logItem";
-      d.dataset.shotId=s.id;
-      d.innerHTML=`
-        <div class="logMain">Shot ${s.shot} • ${s.yards} raw • ${s.playYards} play • ${s.club} • Hole ${s.hole}</div>
-        <div class="logMeta">${conditionsSummaryText(s.windClubs, s.holeClubs, s.greenClubs)} • ${shotRuleText(s.yards)}</div>
+      function resolvedNextHaikuDistance() {
+        syncTokensFromDistanceIfNeeded();
+        const numeric = nextHaikuTokens.filter((token) => /^[0-9]$/.test(token)).join("");
+        if (numeric) {
+          const manual = clampDistance(Number(numeric));
+          if (manual > 0) return manual;
+        }
+        const holeYards = readHoleYardsFromMarkdown(getCurrentHoleNumber());
+        return Number.isFinite(holeYards) && holeYards > 0
+          ? clampDistance(holeYards)
+          : 0;
+      }
+
+      function nextDistanceDigits() {
+        syncTokensFromDistanceIfNeeded();
+        return [...nextHaikuTokens];
+      }
+
+      function readHoleYardsFromMarkdown(holeNumber) {
+        const section = extractHoleSection(courseMarkdown, holeNumber);
+        if (!section) return null;
+        const heading = section.split(/\n/)[0] || "";
+        const match = heading.match(/(?:^|–|-)\s*(\d{2,3})\s*$/);
+        if (!match) return null;
+        const yards = Number(match[1]);
+        return Number.isFinite(yards) ? yards : null;
+      }
+
+      function syncNextDistanceFromContext(forceFromMarkdown = false) {
+        if (forceFromMarkdown) {
+          const holeYards = readHoleYardsFromMarkdown(getCurrentHoleNumber());
+          nextHaikuDistance = 0;
+          nextHaikuTokens = defaultNextHaikuTokens();
+          return;
+        }
+        syncTokensFromDistanceIfNeeded();
+        const numeric = nextHaikuTokens.filter((token) => /^[0-9]$/.test(token)).join("");
+        nextHaikuDistance = numeric ? clampDistance(Number(numeric)) : 0;
+      }
+
+      function setNextDistanceDigit(index, token) {
+        syncTokensFromDistanceIfNeeded();
+        nextHaikuTokens[index] = normalizeDigitToken(token, index);
+        const numeric = nextHaikuTokens.filter((value) => /^[0-9]$/.test(value)).join("");
+        nextHaikuDistance = numeric ? clampDistance(Number(numeric)) : 0;
+      }
+
+      function haiku() {
+        return [
+          "Coils. High. Address tall.",
+          "E(ye) Z(en) 1 2 3 4 High",
+          null,
+        ];
+      }
+
+      function windSummary(value = windClubs) {
+        if (value === 0) return "Wind flat";
+        return value < 0
+          ? `Wind helping ${Math.abs(value)}`
+          : `Wind hurting ${value}`;
+      }
+      function holeSummary(value = holeClubs) {
+        if (value === 0) return "Hole flat";
+        return value < 0
+          ? `Hole downhill ${Math.abs(value)}`
+          : `Hole uphill ${value}`;
+      }
+      function greenSummary(value = greenClubs) {
+        if (value === 0) return "Green flat";
+        return value < 0
+          ? `Green downhill ${Math.abs(value)}`
+          : `Green uphill ${value}`;
+      }
+      function conditionsSummaryText(
+        w = windClubs,
+        h = holeClubs,
+        g = greenClubs,
+      ) {
+        return `${windSummary(w)} • ${holeSummary(h)} • ${greenSummary(g)}`;
+      }
+
+      function applicableConditionClubs(
+        y,
+        w = windClubs,
+        h = holeClubs,
+        g = greenClubs,
+      ) {
+        const rawYards = Number(y) || 0;
+        if (rawYards <= 10) return 0;
+        const slope = h + g;
+        if (rawYards <= SHORT_GAME_THRESHOLD) return slope;
+        return w + slope;
+      }
+      function adjustedYards(y, w = windClubs, h = holeClubs, g = greenClubs) {
+        const rawYards = Number(y) || 0;
+
+        if (rawYards <= 10) {
+          let adjusted = rawYards;
+          if (g > 0) {
+            adjusted = rawYards + g * 4;
+          } else if (g < 0) {
+            adjusted = rawYards * Math.pow(0.5, Math.abs(g));
+          }
+          return Math.max(1, Math.round(adjusted));
+        }
+
+        if (rawYards <= SHORT_GAME_THRESHOLD) {
+          return Math.max(
+            1,
+            Math.round(rawYards + (h + g) * CLUB_YARD_ADJUSTMENT),
+          );
+        }
+
+        return Math.max(
+          1,
+          Math.round(rawYards + (w + h + g) * CLUB_YARD_ADJUSTMENT),
+        );
+      }
+      function shotRuleText(y) {
+        const rawYards = Number(y) || 0;
+        if (rawYards <= 10) {
+          return "Putts use green slope only: uphill adds 4 yards per step, downhill halves distance per step.";
+        }
+        if (rawYards <= SHORT_GAME_THRESHOLD) {
+          return `Play distance uses hole and green slope only at ${SHORT_GAME_THRESHOLD} yards and in.`;
+        }
+        return `Play distance uses wind, hole slope, and green slope above ${SHORT_GAME_THRESHOLD} yards.`;
+      }
+
+      function getDeviceId() {
+        let id = localStorage.getItem("golfToolsDeviceId");
+        if (!id) {
+          id = crypto.randomUUID
+            ? crypto.randomUUID()
+            : "dev-" + Date.now() + "-" + Math.random().toString(16).slice(2);
+          localStorage.setItem("golfToolsDeviceId", id);
+        }
+        return id;
+      }
+      function getTodayKey() {
+        const d = new Date();
+        const y = d.getFullYear();
+        const m = String(d.getMonth() + 1).padStart(2, "0");
+        const day = String(d.getDate()).padStart(2, "0");
+        return `${getDeviceId()}-${y}-${m}-${day}`;
+      }
+      function localRoundKey() {
+        return `${LOCAL_PREFIX}-round-${getTodayKey()}`;
+      }
+      function localSettingsKey() {
+        return `${LOCAL_PREFIX}-settings-${getDeviceId()}`;
+      }
+      function roundState() {
+        return { input, last, shots };
+      }
+      function settingsState() {
+        return {
+          activeTab,
+          liveUrlValue,
+          windClubs,
+          holeClubs,
+          greenClubs,
+          courseMarkdown,
+          isMemoryExpanded,
+          nextHaikuDistance,
+          nextHaikuTokens,
+        };
+      }
+
+      function saveLocalFallback() {
+        try {
+          localStorage.setItem(localRoundKey(), JSON.stringify(roundState()));
+          localStorage.setItem(
+            localSettingsKey(),
+            JSON.stringify(settingsState()),
+          );
+        } catch (e) {
+          console.error("local backup save failed", e);
+        }
+      }
+      function loadLocalFallback() {
+        let round = null,
+          settings = null;
+        try {
+          round = JSON.parse(localStorage.getItem(localRoundKey()) || "null");
+        } catch (e) {}
+        try {
+          settings = JSON.parse(
+            localStorage.getItem(localSettingsKey()) || "null",
+          );
+        } catch (e) {}
+        return { round, settings };
+      }
+
+      function openDB() {
+        return new Promise((resolve, reject) => {
+          const req = indexedDB.open(DB, 1);
+          req.onupgradeneeded = (e) => {
+            const dbase = e.target.result;
+            if (!dbase.objectStoreNames.contains(ROUND_STORE))
+              dbase.createObjectStore(ROUND_STORE, { keyPath: "id" });
+            if (!dbase.objectStoreNames.contains(SETTINGS_STORE))
+              dbase.createObjectStore(SETTINGS_STORE, { keyPath: "id" });
+          };
+          req.onsuccess = () => {
+            db = req.result;
+            resolve();
+          };
+          req.onerror = () => reject(req.error);
+        });
+      }
+      function saveToIndexedDB() {
+        if (!db) return;
+        const tx = db.transaction([ROUND_STORE, SETTINGS_STORE], "readwrite");
+        tx.objectStore(ROUND_STORE).put({
+          id: getTodayKey(),
+          state: roundState(),
+          updatedAt: Date.now(),
+        });
+        tx.objectStore(SETTINGS_STORE).put({
+          id: getDeviceId(),
+          state: settingsState(),
+          updatedAt: Date.now(),
+        });
+      }
+      function loadRoundFromIndexedDB() {
+        return new Promise((resolve, reject) => {
+          if (!db) {
+            resolve(null);
+            return;
+          }
+          const req = db
+            .transaction(ROUND_STORE, "readonly")
+            .objectStore(ROUND_STORE)
+            .get(getTodayKey());
+          req.onsuccess = () => resolve(req.result || null);
+          req.onerror = () => reject(req.error);
+        });
+      }
+      function loadSettingsFromIndexedDB() {
+        return new Promise((resolve, reject) => {
+          if (!db) {
+            resolve(null);
+            return;
+          }
+          const req = db
+            .transaction(SETTINGS_STORE, "readonly")
+            .objectStore(SETTINGS_STORE)
+            .get(getDeviceId());
+          req.onsuccess = () => resolve(req.result || null);
+          req.onerror = () => reject(req.error);
+        });
+      }
+      function deleteTodayFromIndexedDB() {
+        return new Promise((resolve, reject) => {
+          if (!db) {
+            resolve();
+            return;
+          }
+          const req = db
+            .transaction(ROUND_STORE, "readwrite")
+            .objectStore(ROUND_STORE)
+            .delete(getTodayKey());
+          req.onsuccess = () => resolve();
+          req.onerror = () => reject(req.error);
+        });
+      }
+      function saveAll() {
+        saveLocalFallback();
+        saveToIndexedDB();
+        pulseSaved();
+      }
+      function pulseSaved() {
+        const el = document.getElementById("savedText");
+        el.innerText = "Saved ✓";
+        clearTimeout(savePulseTimer);
+        savePulseTimer = setTimeout(() => {
+          el.innerText = "Saved locally for this device and day.";
+        }, 1200);
+      }
+
+      function nextPosition(y, previousShot = last) {
+        if (!previousShot) return { hole: 1, shot: 1 };
+        if (
+          typeof y === "number" &&
+          Number.isFinite(y) &&
+          y > previousShot.yards + 80
+        ) {
+          return { hole: previousShot.hole + 1, shot: 1 };
+        }
+        return { hole: previousShot.hole, shot: previousShot.shot + 1 };
+      }
+
+      function makeShot(yards, shotConditions, position) {
+        const playYards = adjustedYards(
+          yards,
+          shotConditions.windClubs,
+          shotConditions.holeClubs,
+          shotConditions.greenClubs,
+        );
+        return {
+          id: crypto.randomUUID
+            ? crypto.randomUUID()
+            : "shot-" + Date.now() + "-" + Math.random().toString(16).slice(2),
+          hole: position.hole,
+          shot: position.shot,
+          yards,
+          playYards,
+          club: club(playYards),
+          windClubs: shotConditions.windClubs,
+          holeClubs: shotConditions.holeClubs,
+          greenClubs: shotConditions.greenClubs,
+        };
+      }
+
+      function shotLogTitle(shot) {
+        const hole = Number.isFinite(Number(shot && shot.hole)) ? Number(shot.hole) : 1;
+        const shotNum = Number.isFinite(Number(shot && shot.shot)) ? Number(shot.shot) : 1;
+        return `Hole ${hole} • Shot ${shotNum}`;
+      }
+
+      function shotLogMain(shot) {
+        const raw = Number.isFinite(Number(shot && shot.yards)) ? Number(shot.yards) : 0;
+        const play = Number.isFinite(Number(shot && shot.playYards)) ? Number(shot.playYards) : 0;
+        const clubName = shot && shot.club ? shot.club : "—";
+        return `${shotLogTitle(shot)} • Raw ${raw} • Play ${play} • Club ${clubName}`;
+      }
+
+      function recomputeShots() {
+        const chronological = [...shots].reverse();
+        const rebuilt = [];
+        let previous = null;
+        chronological.forEach((existing) => {
+          const yards = Number(existing && existing.yards);
+          if (!Number.isFinite(yards) || yards <= 0) return;
+          const shotConditions = {
+            windClubs: Number.isFinite(Number(existing && existing.windClubs))
+              ? Number(existing.windClubs)
+              : 0,
+            holeClubs: Number.isFinite(Number(existing && existing.holeClubs))
+              ? Number(existing.holeClubs)
+              : 0,
+            greenClubs: Number.isFinite(Number(existing && existing.greenClubs))
+              ? Number(existing.greenClubs)
+              : 0,
+          };
+          const pos = nextPosition(yards, previous);
+          const playYards = adjustedYards(
+            yards,
+            shotConditions.windClubs,
+            shotConditions.holeClubs,
+            shotConditions.greenClubs,
+          );
+          const shot = {
+            id:
+              existing.id ||
+              (crypto.randomUUID
+                ? crypto.randomUUID()
+                : "shot-" +
+                  Date.now() +
+                  "-" +
+                  Math.random().toString(16).slice(2)),
+            hole: pos.hole,
+            shot: pos.shot,
+            yards,
+            playYards,
+            club: club(playYards),
+            windClubs: shotConditions.windClubs,
+            holeClubs: shotConditions.holeClubs,
+            greenClubs: shotConditions.greenClubs,
+          };
+          rebuilt.push(shot);
+          previous = shot;
+        });
+        shots = rebuilt.reverse();
+        last = shots.length ? shots[0] : null;
+      }
+
+
+      function recoverShotsFromLastIfNeeded() {
+        if (Array.isArray(shots) && shots.length) return;
+        const savedLast = last && typeof last === "object" ? last : null;
+        const yards = Number(savedLast && savedLast.yards);
+        if (!savedLast || !Number.isFinite(yards) || yards <= 0) return;
+        const recovered = {
+          id:
+            savedLast.id ||
+            (crypto.randomUUID
+              ? crypto.randomUUID()
+              : "shot-" + Date.now() + "-" + Math.random().toString(16).slice(2)),
+          hole: Number.isFinite(Number(savedLast.hole)) ? Number(savedLast.hole) : 1,
+          shot: Number.isFinite(Number(savedLast.shot)) ? Number(savedLast.shot) : 1,
+          yards,
+          playYards: adjustedYards(
+            yards,
+            Number.isFinite(Number(savedLast.windClubs)) ? Number(savedLast.windClubs) : 0,
+            Number.isFinite(Number(savedLast.holeClubs)) ? Number(savedLast.holeClubs) : 0,
+            Number.isFinite(Number(savedLast.greenClubs)) ? Number(savedLast.greenClubs) : 0,
+          ),
+          club: savedLast.club || club(yards),
+          windClubs: Number.isFinite(Number(savedLast.windClubs)) ? Number(savedLast.windClubs) : 0,
+          holeClubs: Number.isFinite(Number(savedLast.holeClubs)) ? Number(savedLast.holeClubs) : 0,
+          greenClubs: Number.isFinite(Number(savedLast.greenClubs)) ? Number(savedLast.greenClubs) : 0,
+        };
+        recovered.club = club(recovered.playYards);
+        shots = [recovered];
+        last = recovered;
+      }
+
+
+      function ensureOpeningShotFromMarkdown() {
+        if ((Array.isArray(shots) && shots.length) || last) return;
+        const openingYards = readHoleYardsFromMarkdown(1);
+        if (!Number.isFinite(openingYards) || openingYards <= 0) return;
+        const openingShot = makeShot(
+          openingYards,
+          { windClubs, holeClubs, greenClubs },
+          { hole: 1, shot: 1 },
+        );
+        shots = [openingShot];
+        last = openingShot;
+      }
+
+      function currentProjected() {
+        const y = input ? Number(input) : null;
+        if (Number.isFinite(y) && y > 0) return nextPosition(y);
+        if (last) return nextPosition();
+        return { hole: 1, shot: 1 };
+      }
+
+      function summarizeMarkdown(md) {
+        const text = (md || "").trim();
+        if (!text) return { status: "No course markdown loaded.", preview: "" };
+        const lines = text
+          .split(/\r?\n/)
+          .map((s) => s.trim())
+          .filter(Boolean);
+        const titleLine = lines.find((line) => line.startsWith("# ")) || "";
+        const heading = titleLine
+          ? titleLine.replace(/^#\s+/, "")
+          : "Course markdown loaded.";
+        return { status: heading, preview: text };
+      }
+      function getCurrentHoleNumber() {
+        const projected = currentProjected();
+        return projected && projected.hole ? projected.hole : 1;
+      }
+      function extractHoleSection(md, holeNumber) {
+        const text = (md || "").trim();
+        if (!text) return "";
+        const normalized = text.replace(/\r\n/g, "\n");
+        const headingRegex = new RegExp(
+          "^###\\s+Hole\\s+" + holeNumber + "\\b.*$",
+          "mi",
+        );
+        const match = normalized.match(headingRegex);
+        if (!match) return "";
+        const start = match.index;
+        const rest = normalized.slice(start);
+        const afterHeading = rest.slice(match[0].length);
+        const nextMatch = afterHeading.match(/\n###\s+Hole\s+\d+\b/i);
+        if (nextMatch) {
+          return rest.slice(0, match[0].length + nextMatch.index).trim();
+        }
+        return rest.trim();
+      }
+      function renderCourseMemory() {
+        const summary = summarizeMarkdown(courseMarkdown);
+        const statusEl = document.getElementById("memoryStatus");
+        const previewEl = document.getElementById("memoryPreview");
+        const previewWrap = document.getElementById("memoryPreviewWrap");
+        const toggleEl = document.getElementById("toggleMdLink");
+        const currentHole = getCurrentHoleNumber();
+        const holeSection = extractHoleSection(courseMarkdown, currentHole);
+        const hasMarkdown = !!(courseMarkdown && courseMarkdown.trim());
+
+        statusEl.innerText = hasMarkdown
+          ? `${summary.status} • Hole ${currentHole}`
+          : summary.status;
+
+        if (holeSection) {
+          previewEl.innerText = holeSection;
+          previewEl.classList.remove("memoryEmpty");
+        } else if (hasMarkdown) {
+          previewEl.innerText = `No section found for Hole ${currentHole}. Add a markdown heading like "### Hole ${currentHole}".`;
+          previewEl.classList.add("memoryEmpty");
+        } else {
+          previewEl.innerText =
+            "Paste course markdown to keep hole strategy in memory.";
+          previewEl.classList.add("memoryEmpty");
+        }
+
+        toggleEl.innerText = isMemoryExpanded ? "Hide" : "Show";
+        toggleEl.style.visibility = hasMarkdown ? "visible" : "hidden";
+        previewWrap.classList.toggle(
+          "hidden",
+          !hasMarkdown || !isMemoryExpanded,
+        );
+      }
+      function toggleCourseMemory() {
+        isMemoryExpanded = !isMemoryExpanded;
+        renderCourseMemory();
+        saveAll();
+      }
+      function openMdModal() {
+        draftCourseMarkdown = courseMarkdown || "";
+        document.getElementById("mdTextarea").value = draftCourseMarkdown;
+        document.getElementById("mdModal").classList.remove("hidden");
+      }
+      function closeMdModal() {
+        document.getElementById("mdModal").classList.add("hidden");
+      }
+      function saveMarkdownMemory() {
+        courseMarkdown = (
+          document.getElementById("mdTextarea").value || ""
+        ).trim();
+        isMemoryExpanded = false;
+        syncNextDistanceFromContext(true);
+        renderCourseMemory();
+        renderHaiku();
+        saveAll();
+        closeMdModal();
+      }
+      function clearMarkdownMemory() {
+        const ok = confirm(
+          "Clear saved course markdown from memory on this device?",
+        );
+        if (!ok) return;
+        courseMarkdown = "";
+        isMemoryExpanded = false;
+        document.getElementById("mdTextarea").value = "";
+        syncNextDistanceFromContext(true);
+        renderCourseMemory();
+        renderHaiku();
+        saveAll();
+        closeMdModal();
+      }
+
+      function renderDigitPopover() {
+        const card = document.getElementById("digitPopoverCard");
+        const wrap = document.getElementById("digitPopover");
+        const title = document.getElementById("digitPopoverTitle");
+        const digits = nextDistanceDigits();
+        if (activeDigitIndex === null) {
+          card.classList.add("hidden");
+          wrap.innerHTML = "";
+          return;
+        }
+        const options =
+          activeDigitIndex === 2
+            ? [
+                { value: "0", label: "0️⃣" },
+                { value: "1", label: "1️⃣" },
+                { value: "2", label: "2️⃣" },
+                { value: "3", label: "3️⃣" },
+                { value: "4", label: "4️⃣" },
+                { value: "5", label: "5️⃣" },
+                { value: "6", label: "6️⃣" },
+                { value: "7", label: "7️⃣" },
+                { value: "8", label: "8️⃣" },
+                { value: "9", label: "9️⃣" },
+                { value: "grass", label: "🌿" },
+              ]
+            : [
+                { value: "up", label: "⬆️" },
+                { value: "down", label: "⬇️" },
+                { value: "0", label: "0️⃣" },
+                { value: "1", label: "1️⃣" },
+                { value: "2", label: "2️⃣" },
+                { value: "3", label: "3️⃣" },
+                { value: "4", label: "4️⃣" },
+                { value: "5", label: "5️⃣" },
+                { value: "6", label: "6️⃣" },
+                { value: "7", label: "7️⃣" },
+                { value: "8", label: "8️⃣" },
+                { value: "9", label: "9️⃣" },
+              ];
+        card.classList.remove("hidden");
+        title.innerText = `Set digit ${activeDigitIndex + 1} for next shot`;
+        wrap.innerHTML = "";
+        options.forEach((option) => {
+          const btn = document.createElement("button");
+          btn.className =
+            "emojiDigit" + (digits[activeDigitIndex] === option.value ? " active" : "");
+          btn.dataset.digitValue = option.value;
+          btn.type = "button";
+          btn.innerText = option.label;
+          wrap.appendChild(btn);
+        });
+      }
+
+      function renderHaiku(triggerShedPulse = false) {
+        syncNextDistanceFromContext();
+        const fallbackDistance = resolvedNextHaikuDistance();
+        const rawPreview = input ? Number(input) : null;
+        const yPreview = Number.isFinite(rawPreview) && rawPreview > 0 ? rawPreview : fallbackDistance;
+        const hasPreview = Number.isFinite(yPreview) && yPreview > 0;
+        const projected = currentProjected();
+        const previewAdjusted = hasPreview ? adjustedYards(yPreview) : null;
+        const previewClub = hasPreview ? club(previewAdjusted) : "—";
+
+        document.getElementById("display").innerText = input || (fallbackDistance ? String(fallbackDistance) : "Enter yards");
+        document.getElementById("holeShotPill").innerText =
+          `Hole ${projected.hole} • Shot ${projected.shot}`;
+        document.getElementById("statusText").innerText =
+          `Hole ${projected.hole} • Shot ${projected.shot} • Yards ${hasPreview ? yPreview : "—"} • Play ${hasPreview ? previewAdjusted : "—"} • Club ${hasPreview ? previewClub : "—"}`;
+        document.getElementById("conditionsSummary").innerText =
+          conditionsSummaryText();
+        document.getElementById("title").innerText = last
+          ? `Attached ${last.club}`
+          : `Attached ${previewClub}`;
+
+        const h = document.getElementById("haiku");
+        h.innerHTML = "";
+        const digits = nextDistanceDigits();
+        haiku().forEach((line, index) => {
+          const d = document.createElement("div");
+          d.className = "line" + (index === 2 ? " shedLine" : "");
+          if (index !== 2) {
+            d.innerText = line;
+          } else {
+            d.classList.add("distanceLine");
+            const label = document.createElement("span");
+            label.className = "distanceLabel";
+            label.innerText = "Step";
+            d.appendChild(label);
+
+            const digitWrap = document.createElement("span");
+            digitWrap.className = "digitWrap";
+            digits.forEach((digit, digitIndex) => {
+              const btn = document.createElement("button");
+              btn.className = "digitBtn" + (activeDigitIndex === digitIndex ? " active" : "");
+              btn.type = "button";
+              btn.dataset.digitIndex = String(digitIndex);
+              btn.setAttribute("aria-label", `Set digit ${digitIndex + 1}`);
+              btn.innerText = tokenEmoji(digit, digitIndex);
+              digitWrap.appendChild(btn);
+            });
+            d.appendChild(digitWrap);
+
+            const suffix = document.createElement("span");
+            suffix.className = "distanceSuffix";
+            suffix.innerText = "yards";
+            d.appendChild(suffix);
+          }
+          if (index === 2 && triggerShedPulse) {
+            d.classList.add("shedPulse");
+            clearTimeout(shedPulseTimer);
+            shedPulseTimer = setTimeout(
+              () => d.classList.remove("shedPulse"),
+              900,
+            );
+          }
+          h.appendChild(d);
+        });
+        renderDigitPopover();
+
+        document.getElementById("logTitle").innerText =
+          `SHOT LOG (${shots.length} ${shots.length === 1 ? "shot" : "shots"})`;
+        const log = document.getElementById("log");
+        log.innerHTML = "";
+        if (!shots.length) {
+          const d = document.createElement("div");
+          d.className = "empty";
+          d.innerText = "No shots logged yet.";
+          log.appendChild(d);
+        } else {
+          shots.forEach((s) => {
+            const d = document.createElement("div");
+            d.className = "logItem";
+            d.dataset.shotId = s.id;
+            d.innerHTML = `
+        <div class="logMain">${shotLogMain(s)}</div>
+        <div class="logMeta">${conditionsSummaryText(s.windClubs, s.holeClubs, s.greenClubs)}</div>
+        <div class="logMeta">${shotRuleText(s.yards)}</div>
       `;
-      log.appendChild(d);
-    });
-  }
-}
+            log.appendChild(d);
+          });
+        }
+      }
 
-function commit(){
-  const y=Number(input);
-  if(!y) return;
-  const pos=nextPosition(y);
-  const newShot=makeShot(y, { windClubs, holeClubs, greenClubs }, pos);
-  last=newShot;
-  shots.unshift(newShot);
-  input="";
-  renderHaiku(true);
-  saveAll();
-}
+      function commitSelectedNextDistance() {
+        const selectedYards = resolvedNextHaikuDistance();
+        if (!selectedYards) return;
+        input = String(selectedYards);
+        nextHaikuDistance = 0;
+        nextHaikuTokens = defaultNextHaikuTokens();
+        activeDigitIndex = null;
+        commit();
+      }
 
-async function clearAndStartOver(){
-  const ok=confirm("Start over and clear today's round on this device?");
-  if(!ok) return;
-  input="";
-  last=null;
-  shots=[];
-  renderHaiku();
-  try{
-    await deleteTodayFromIndexedDB();
-    localStorage.removeItem(localRoundKey());
-  }catch(e){ console.error(e); }
-  pulseSaved();
-}
+      function commit() {
+        const y = Number(input);
+        if (!y) return;
+        const pos = nextPosition(y);
+        const newShot = makeShot(y, { windClubs, holeClubs, greenClubs }, pos);
+        last = newShot;
+        shots.unshift(newShot);
+        recomputeShots();
+        input = "";
+        activeDigitIndex = null;
+        renderCourseMemory();
+        renderHaiku(true);
+        saveAll();
+      }
 
-function normalizeUrl(value){
-  const v=(value || "").trim();
-  if(!v) return "";
-  return /^https?:\/\//i.test(v) ? v : "https://" + v;
-}
-function loadLiveIntoFrame(){
-  const inputEl=document.getElementById("liveUrl");
-  const statusEl=document.getElementById("liveStatus");
-  const frame=document.getElementById("liveFrame");
-  const normalized=normalizeUrl(inputEl.value);
-  if(!normalized){ statusEl.innerText="Enter a scorecard URL first."; return; }
-  inputEl.value=normalized;
-  liveUrlValue=normalized;
-  frame.src=normalized;
-  statusEl.innerText=`Loaded: ${normalized}`;
-  saveAll();
-}
-function setActiveTab(which, persist=true){
-  activeTab=which;
-  const isHaiku=which==="haiku";
-  document.getElementById("tabHaiku").classList.toggle("active", isHaiku);
-  document.getElementById("tabLive").classList.toggle("active", !isHaiku);
-  document.getElementById("pageHaiku").classList.toggle("hidden", !isHaiku);
-  document.getElementById("pageLive").classList.toggle("hidden", isHaiku);
-  if(persist) saveAll();
-}
+      async function clearAndStartOver() {
+        const ok = confirm(
+          "Start over and clear today's round on this device?",
+        );
+        if (!ok) return;
+        input = "";
+        last = null;
+        shots = [];
+        nextHaikuDistance = 0;
+        nextHaikuTokens = defaultNextHaikuTokens();
+        syncNextDistanceFromContext(true);
+        renderCourseMemory();
+        renderHaiku();
+        try {
+          await deleteTodayFromIndexedDB();
+          localStorage.removeItem(localRoundKey());
+        } catch (e) {
+          console.error(e);
+        }
+        pulseSaved();
+      }
 
-function renderConditionsDraft(){
-  document.getElementById("windSlider").value=String(draftWindClubs);
-  document.getElementById("holeSlider").value=String(draftHoleClubs);
-  document.getElementById("greenSlider").value=String(draftGreenClubs);
-  document.getElementById("windValue").innerText=windSummary(draftWindClubs);
-  document.getElementById("holeValue").innerText=holeSummary(draftHoleClubs);
-  document.getElementById("greenValue").innerText=greenSummary(draftGreenClubs);
-  const previewYards=input ? Number(input) : (last ? Number(last.yards) : SHORT_GAME_THRESHOLD);
-  document.getElementById("conditionsRuleText").innerText=shotRuleText(previewYards);
-}
-function openWeatherModal(){
-  draftWindClubs=windClubs;
-  draftHoleClubs=holeClubs;
-  draftGreenClubs=greenClubs;
-  renderConditionsDraft();
-  document.getElementById("weatherModal").classList.remove("hidden");
-}
-function closeWeatherModal(){ document.getElementById("weatherModal").classList.add("hidden"); }
-function saveWeatherSettings(){
-  windClubs=draftWindClubs;
-  holeClubs=draftHoleClubs;
-  greenClubs=draftGreenClubs;
-  renderHaiku();
-  saveAll();
-  closeWeatherModal();
-}
+      function normalizeUrl(value) {
+        const v = (value || "").trim();
+        if (!v) return "";
+        return /^https?:\/\//i.test(v) ? v : "https://" + v;
+      }
+      function loadLiveIntoFrame() {
+        const inputEl = document.getElementById("liveUrl");
+        const statusEl = document.getElementById("liveStatus");
+        const frame = document.getElementById("liveFrame");
+        const normalized = normalizeUrl(inputEl.value);
+        if (!normalized) {
+          statusEl.innerText = "Enter a scorecard URL first.";
+          return;
+        }
+        inputEl.value = normalized;
+        liveUrlValue = normalized;
+        frame.src = normalized;
+        statusEl.innerText = `Loaded: ${normalized}`;
+        saveAll();
+      }
+      function setActiveTab(which, persist = true) {
+        activeTab = which;
+        const isHaiku = which === "haiku";
+        document.getElementById("tabHaiku").classList.toggle("active", isHaiku);
+        document.getElementById("tabLive").classList.toggle("active", !isHaiku);
+        document
+          .getElementById("pageHaiku")
+          .classList.toggle("hidden", !isHaiku);
+        document.getElementById("pageLive").classList.toggle("hidden", isHaiku);
+        if (persist) saveAll();
+      }
 
-function openEditModal(shotId){
-  const shot=shots.find(s=>s.id===shotId);
-  if(!shot) return;
-  editingShotId=shot.id;
-  document.getElementById("editShotMeta").innerText=`Hole ${shot.hole} • Shot ${shot.shot} • ${shot.club}`;
-  document.getElementById("editDistance").value=shot.yards;
-  document.getElementById("editModal").classList.remove("hidden");
-}
-function closeEditModal(){
-  editingShotId=null;
-  document.getElementById("editModal").classList.add("hidden");
-}
-function saveEditedShot(){
-  if(!editingShotId) return;
-  const idx=shots.findIndex(s=>s.id===editingShotId);
-  if(idx<0) return;
-  const yards=Number(document.getElementById("editDistance").value);
-  if(!Number.isFinite(yards) || yards<=0) return;
-  shots[idx].yards=yards;
-  recomputeShots();
-  renderHaiku();
-  saveAll();
-  closeEditModal();
-}
-function deleteEditedShot(){
-  if(!editingShotId) return;
-  const shot=shots.find(s=>s.id===editingShotId);
-  if(!shot) return;
-  const ok=confirm(`Delete Hole ${shot.hole} • Shot ${shot.shot}?`);
-  if(!ok) return;
-  shots=shots.filter(s=>s.id!==editingShotId);
-  recomputeShots();
-  renderHaiku();
-  saveAll();
-  closeEditModal();
-}
+      function renderConditionsDraft() {
+        document.getElementById("windSlider").value = String(draftWindClubs);
+        document.getElementById("holeSlider").value = String(draftHoleClubs);
+        document.getElementById("greenSlider").value = String(draftGreenClubs);
+        document.getElementById("windValue").innerText =
+          windSummary(draftWindClubs);
+        document.getElementById("holeValue").innerText =
+          holeSummary(draftHoleClubs);
+        document.getElementById("greenValue").innerText =
+          greenSummary(draftGreenClubs);
+        const previewYards = input
+          ? Number(input)
+          : last
+            ? Number(last.yards)
+            : SHORT_GAME_THRESHOLD;
+        document.getElementById("conditionsRuleText").innerText =
+          shotRuleText(previewYards);
+      }
+      function openWeatherModal() {
+        draftWindClubs = windClubs;
+        draftHoleClubs = holeClubs;
+        draftGreenClubs = greenClubs;
+        renderConditionsDraft();
+        document.getElementById("weatherModal").classList.remove("hidden");
+      }
+      function closeWeatherModal() {
+        document.getElementById("weatherModal").classList.add("hidden");
+      }
+      function saveWeatherSettings() {
+        windClubs = draftWindClubs;
+        holeClubs = draftHoleClubs;
+        greenClubs = draftGreenClubs;
+        renderHaiku();
+        saveAll();
+        closeWeatherModal();
+      }
 
-// events
-const pad=document.getElementById("pad");
-pad.onclick=e=>{
-  const k=e.target.dataset.k;
-  if(!k) return;
-  if(k==="C") input="";
-  else if(k==="⌫") input=input.slice(0,-1);
-  else input+=k;
-  renderHaiku();
-  saveAll();
-};
-document.getElementById("ok").onclick=commit;
-document.getElementById("clearLink").onclick=clearAndStartOver;
-document.getElementById("tabHaiku").onclick=()=>setActiveTab("haiku");
-document.getElementById("tabLive").onclick=()=>setActiveTab("live");
-document.getElementById("weatherBtn").onclick=openWeatherModal;
-document.getElementById("closeWeather").onclick=closeWeatherModal;
-document.getElementById("saveWeather").onclick=saveWeatherSettings;
-document.getElementById("windSlider").addEventListener("input", e=>{ draftWindClubs=Number(e.target.value); renderConditionsDraft(); });
-document.getElementById("holeSlider").addEventListener("input", e=>{ draftHoleClubs=Number(e.target.value); renderConditionsDraft(); });
-document.getElementById("greenSlider").addEventListener("input", e=>{ draftGreenClubs=Number(e.target.value); renderConditionsDraft(); });
-document.getElementById("loadLiveUrl").onclick=loadLiveIntoFrame;
-document.getElementById("liveUrl").addEventListener("keydown", e=>{ if(e.key==="Enter") loadLiveIntoFrame(); });
-document.getElementById("liveUrl").addEventListener("input", e=>{ liveUrlValue=e.target.value; saveAll(); });
-document.getElementById("log").addEventListener("click", e=>{
-  const item=e.target.closest('.logItem');
-  if(!item) return;
-  openEditModal(item.dataset.shotId);
-});
-document.getElementById("closeEdit").onclick=closeEditModal;
-document.getElementById("cancelEdit").onclick=closeEditModal;
-document.getElementById("saveEdit").onclick=saveEditedShot;
-document.getElementById("deleteEdit").onclick=deleteEditedShot;
-document.getElementById("toggleMdLink").onclick=toggleCourseMemory;
-document.getElementById("openMdLink").onclick=openMdModal;
-document.getElementById("closeMd").onclick=closeMdModal;
-document.getElementById("cancelMd").onclick=closeMdModal;
-document.getElementById("saveMd").onclick=saveMarkdownMemory;
-document.getElementById("clearMd").onclick=clearMarkdownMemory;
+      function openEditModal(shotId) {
+        const shot = shots.find((s) => s.id === shotId);
+        if (!shot) return;
+        editingShotId = shot.id;
+        document.getElementById("editShotMeta").innerText =
+          `Hole ${shot.hole} • Shot ${shot.shot} • ${shot.club}`;
+        document.getElementById("editDistance").value = shot.yards;
+        document.getElementById("editModal").classList.remove("hidden");
+      }
+      function closeEditModal() {
+        editingShotId = null;
+        document.getElementById("editModal").classList.add("hidden");
+      }
+      function saveEditedShot() {
+        if (!editingShotId) return;
+        const idx = shots.findIndex((s) => s.id === editingShotId);
+        if (idx < 0) return;
+        const yards = Number(document.getElementById("editDistance").value);
+        if (!Number.isFinite(yards) || yards <= 0) return;
+        shots[idx].yards = yards;
+        recomputeShots();
+        renderCourseMemory();
+        renderHaiku();
+        saveAll();
+        closeEditModal();
+      }
+      function deleteEditedShot() {
+        if (!editingShotId) return;
+        const shot = shots.find((s) => s.id === editingShotId);
+        if (!shot) return;
+        const ok = confirm(`Delete Hole ${shot.hole} • Shot ${shot.shot}?`);
+        if (!ok) return;
+        shots = shots.filter((s) => s.id !== editingShotId);
+        recomputeShots();
+        renderCourseMemory();
+        renderHaiku();
+        saveAll();
+        closeEditModal();
+      }
 
-document.getElementById("weatherModal").addEventListener("click", e=>{ if(e.target.id==="weatherModal") closeWeatherModal(); });
-document.getElementById("mdModal").addEventListener("click", e=>{ if(e.target.id==="mdModal") closeMdModal(); });
-document.getElementById("editModal").addEventListener("click", e=>{ if(e.target.id==="editModal") closeEditModal(); });
-window.addEventListener("pagehide", saveAll);
-window.addEventListener("beforeunload", saveAll);
-document.addEventListener("visibilitychange", ()=>{ if(document.visibilityState === "hidden") saveAll(); });
+      // events
+      const pad = document.getElementById("pad");
+      pad.onclick = (e) => {
+        const k = e.target.dataset.k;
+        if (!k) return;
+        if (k === "C") input = "";
+        else if (k === "⌫") input = input.slice(0, -1);
+        else input += k;
+        renderHaiku();
+        saveAll();
+      };
+      document.getElementById("ok").onclick = commit;
+      document.getElementById("clearLink").onclick = clearAndStartOver;
+      document.getElementById("tabHaiku").onclick = () => setActiveTab("haiku");
+      document.getElementById("tabLive").onclick = () => setActiveTab("live");
+      document.getElementById("weatherBtn").onclick = openWeatherModal;
+      document.getElementById("closeWeather").onclick = closeWeatherModal;
+      document.getElementById("saveWeather").onclick = saveWeatherSettings;
+      document.getElementById("windSlider").addEventListener("input", (e) => {
+        draftWindClubs = Number(e.target.value);
+        renderConditionsDraft();
+      });
+      document.getElementById("holeSlider").addEventListener("input", (e) => {
+        draftHoleClubs = Number(e.target.value);
+        renderConditionsDraft();
+      });
+      document.getElementById("greenSlider").addEventListener("input", (e) => {
+        draftGreenClubs = Number(e.target.value);
+        renderConditionsDraft();
+      });
+      document.getElementById("loadLiveUrl").onclick = loadLiveIntoFrame;
+      document.getElementById("liveUrl").addEventListener("keydown", (e) => {
+        if (e.key === "Enter") loadLiveIntoFrame();
+      });
+      document.getElementById("liveUrl").addEventListener("input", (e) => {
+        liveUrlValue = e.target.value;
+        saveAll();
+      });
+      document.getElementById("log").addEventListener("click", (e) => {
+        const item = e.target.closest(".logItem");
+        if (!item) return;
+        openEditModal(item.dataset.shotId);
+      });
+      document.getElementById("haiku").addEventListener("click", (e) => {
+        const btn = e.target.closest(".digitBtn");
+        if (!btn) return;
+        e.stopPropagation();
+        const idx = Number(btn.dataset.digitIndex);
+        activeDigitIndex = activeDigitIndex === idx ? null : idx;
+        renderHaiku();
+      });
+      document.getElementById("digitPopoverCard").addEventListener("click", (e) => {
+        e.stopPropagation();
+      });
+      document.getElementById("digitPopover").addEventListener("click", (e) => {
+        const btn = e.target.closest(".emojiDigit");
+        if (!btn || activeDigitIndex === null) return;
+        e.stopPropagation();
+        const selectedIndex = activeDigitIndex;
+        setNextDistanceDigit(selectedIndex, btn.dataset.digitValue);
+        if (selectedIndex === 2) {
+          commitSelectedNextDistance();
+          return;
+        }
+        activeDigitIndex = null;
+        renderHaiku();
+        saveAll();
+      });
+      document.getElementById("closeEdit").onclick = closeEditModal;
+      document.getElementById("cancelEdit").onclick = closeEditModal;
+      document.getElementById("saveEdit").onclick = saveEditedShot;
+      document.getElementById("deleteEdit").onclick = deleteEditedShot;
+      document.getElementById("toggleMdLink").onclick = toggleCourseMemory;
+      document.getElementById("openMdLink").onclick = openMdModal;
+      document.getElementById("closeMd").onclick = closeMdModal;
+      document.getElementById("cancelMd").onclick = closeMdModal;
+      document.getElementById("saveMd").onclick = saveMarkdownMemory;
+      document.getElementById("clearMd").onclick = clearMarkdownMemory;
 
-async function init(){
-  const local=loadLocalFallback();
-  if(local.round){
-    input=local.round.input || "";
-    last=local.round.last || null;
-    shots=Array.isArray(local.round.shots) ? local.round.shots : [];
-  }
-  if(local.settings){
-    activeTab=local.settings.activeTab || "haiku";
-    liveUrlValue=local.settings.liveUrlValue || "";
-    windClubs=Number.isFinite(Number(local.settings.windClubs)) ? Number(local.settings.windClubs) : 0;
-    holeClubs=Number.isFinite(Number(local.settings.holeClubs)) ? Number(local.settings.holeClubs) : 0;
-    greenClubs=Number.isFinite(Number(local.settings.greenClubs)) ? Number(local.settings.greenClubs) : 0;
-    courseMarkdown=typeof local.settings.courseMarkdown === "string" ? local.settings.courseMarkdown : courseMarkdown;
-    isMemoryExpanded=!!local.settings.isMemoryExpanded;
-  }
+      document.getElementById("weatherModal").addEventListener("click", (e) => {
+        if (e.target.id === "weatherModal") closeWeatherModal();
+      });
+      document.getElementById("mdModal").addEventListener("click", (e) => {
+        if (e.target.id === "mdModal") closeMdModal();
+      });
+      document.getElementById("editModal").addEventListener("click", (e) => {
+        if (e.target.id === "editModal") closeEditModal();
+      });
+      document.addEventListener("click", (e) => {
+        if (!e.target.closest("#haiku") && !e.target.closest("#digitPopoverCard")) {
+          if (activeDigitIndex !== null) {
+            activeDigitIndex = null;
+            renderHaiku();
+          }
+        }
+      });
+      window.addEventListener("pagehide", saveAll);
+      window.addEventListener("beforeunload", saveAll);
+      document.addEventListener("visibilitychange", () => {
+        if (document.visibilityState === "hidden") saveAll();
+      });
 
-  try{
-    await openDB();
-    const roundRec=await loadRoundFromIndexedDB();
-    if(roundRec && roundRec.state){
-      input=roundRec.state.input || input;
-      last=roundRec.state.last || last;
-      shots=Array.isArray(roundRec.state.shots) ? roundRec.state.shots : shots;
-    }
-    const settingsRec=await loadSettingsFromIndexedDB();
-    if(settingsRec && settingsRec.state){
-      activeTab=settingsRec.state.activeTab || activeTab;
-      liveUrlValue=settingsRec.state.liveUrlValue || liveUrlValue;
-      windClubs=Number.isFinite(Number(settingsRec.state.windClubs)) ? Number(settingsRec.state.windClubs) : windClubs;
-      holeClubs=Number.isFinite(Number(settingsRec.state.holeClubs)) ? Number(settingsRec.state.holeClubs) : holeClubs;
-      greenClubs=Number.isFinite(Number(settingsRec.state.greenClubs)) ? Number(settingsRec.state.greenClubs) : greenClubs;
-      courseMarkdown=typeof settingsRec.state.courseMarkdown === "string" ? settingsRec.state.courseMarkdown : courseMarkdown;
-      isMemoryExpanded=!!settingsRec.state.isMemoryExpanded;
-    }
-  }catch(e){ console.error("Persistence init failed", e); }
+      async function init() {
+        const local = loadLocalFallback();
+        if (local.round) {
+          input = local.round.input || "";
+          last = local.round.last || null;
+          shots = Array.isArray(local.round.shots) ? local.round.shots : [];
+        }
+        if (local.settings) {
+          activeTab = local.settings.activeTab || "haiku";
+          liveUrlValue = local.settings.liveUrlValue || "";
+          windClubs = Number.isFinite(Number(local.settings.windClubs))
+            ? Number(local.settings.windClubs)
+            : 0;
+          holeClubs = Number.isFinite(Number(local.settings.holeClubs))
+            ? Number(local.settings.holeClubs)
+            : 0;
+          greenClubs = Number.isFinite(Number(local.settings.greenClubs))
+            ? Number(local.settings.greenClubs)
+            : 0;
+          courseMarkdown =
+            typeof local.settings.courseMarkdown === "string"
+              ? local.settings.courseMarkdown
+              : courseMarkdown;
+          isMemoryExpanded = !!local.settings.isMemoryExpanded;
+          nextHaikuDistance = Number.isFinite(Number(local.settings.nextHaikuDistance))
+            ? Number(local.settings.nextHaikuDistance)
+            : nextHaikuDistance;
+          nextHaikuTokens = normalizeStoredTokens(local.settings.nextHaikuTokens)
+            || nextHaikuTokens;
+        }
 
-  recomputeShots();
+        try {
+          await openDB();
+          const roundRec = await loadRoundFromIndexedDB();
+          if (roundRec && roundRec.state) {
+            input = roundRec.state.input || input;
+            last = roundRec.state.last || last;
+            shots = Array.isArray(roundRec.state.shots)
+              ? roundRec.state.shots
+              : shots;
+          }
+          const settingsRec = await loadSettingsFromIndexedDB();
+          if (settingsRec && settingsRec.state) {
+            activeTab = settingsRec.state.activeTab || activeTab;
+            liveUrlValue = settingsRec.state.liveUrlValue || liveUrlValue;
+            windClubs = Number.isFinite(Number(settingsRec.state.windClubs))
+              ? Number(settingsRec.state.windClubs)
+              : windClubs;
+            holeClubs = Number.isFinite(Number(settingsRec.state.holeClubs))
+              ? Number(settingsRec.state.holeClubs)
+              : holeClubs;
+            greenClubs = Number.isFinite(Number(settingsRec.state.greenClubs))
+              ? Number(settingsRec.state.greenClubs)
+              : greenClubs;
+            courseMarkdown =
+              typeof settingsRec.state.courseMarkdown === "string"
+                ? settingsRec.state.courseMarkdown
+                : courseMarkdown;
+            isMemoryExpanded = !!settingsRec.state.isMemoryExpanded;
+            nextHaikuDistance = Number.isFinite(Number(settingsRec.state.nextHaikuDistance))
+              ? Number(settingsRec.state.nextHaikuDistance)
+              : nextHaikuDistance;
+            nextHaikuTokens = normalizeStoredTokens(settingsRec.state.nextHaikuTokens)
+              || nextHaikuTokens;
+          }
+        } catch (e) {
+          console.error("Persistence init failed", e);
+        }
 
-  if(liveUrlValue){
-    document.getElementById("liveUrl").value=liveUrlValue;
-    document.getElementById("liveFrame").src=normalizeUrl(liveUrlValue);
-    document.getElementById("liveStatus").innerText=`Loaded: ${normalizeUrl(liveUrlValue)}`;
-  }
+        recoverShotsFromLastIfNeeded();
+        ensureOpeningShotFromMarkdown();
+        recomputeShots();
+        if (!input && !clampDistance(nextHaikuDistance)) {
+          syncNextDistanceFromContext(true);
+        }
 
-  renderCourseMemory();
-  renderHaiku();
-  setActiveTab(activeTab, false);
-}
+        if (liveUrlValue) {
+          document.getElementById("liveUrl").value = liveUrlValue;
+          document.getElementById("liveFrame").src = normalizeUrl(liveUrlValue);
+          document.getElementById("liveStatus").innerText =
+            `Loaded: ${normalizeUrl(liveUrlValue)}`;
+        }
 
-init();
-</script>
-</body>
+        renderCourseMemory();
+        renderHaiku();
+        setActiveTab(activeTab, false);
+      }
+
+      init();
+    </script>
+  </body>
 </html>
