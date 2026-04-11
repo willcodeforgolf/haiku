@@ -959,7 +959,7 @@
 
       function haiku() {
         return [
-          "Coil. High. Address, trust.",
+          "Coils. High. Address tall.",
           "E(ye) Z(en) 1 2 3 4 High",
           null,
         ];
@@ -1223,7 +1223,7 @@
           playYards,
           club: isPutt ? "P" : club(playYards),
           isPutt,
-          puttFeet: isPutt ? Math.max(1, Math.round(Number(yards) || 0)) : null,
+          puttFeet: null,
           windClubs: shotConditions.windClubs,
           holeClubs: shotConditions.holeClubs,
           greenClubs: shotConditions.greenClubs,
@@ -1241,8 +1241,7 @@
         const play = Number.isFinite(Number(shot && shot.playYards)) ? Number(shot.playYards) : 0;
         const clubName = shot && shot.club ? shot.club : "—";
         if (shot && shot.isPutt) {
-          const feet = Number.isFinite(Number(shot.puttFeet)) ? Number(shot.puttFeet) : raw;
-          return `${shotLogTitle(shot)} • Putt ${feet} ft • Club P`;
+          return `${shotLogTitle(shot)} • Putt ${raw} paces • Club P`;
         }
         return `${shotLogTitle(shot)} • Raw ${raw} • Play ${play} • Club ${clubName}`;
       }
@@ -1290,9 +1289,7 @@
             playYards,
             club: isPutt ? "P" : club(playYards),
             isPutt,
-            puttFeet: isPutt
-              ? (Number.isFinite(Number(existing.puttFeet)) ? Number(existing.puttFeet) : Math.max(1, Math.round(yards)))
-              : null,
+            puttFeet: null,
             windClubs: shotConditions.windClubs,
             holeClubs: shotConditions.holeClubs,
             greenClubs: shotConditions.greenClubs,
@@ -1330,9 +1327,7 @@
               ),
           club: recoveredIsPutt ? "P" : (savedLast.club || club(yards)),
           isPutt: recoveredIsPutt,
-          puttFeet: recoveredIsPutt
-            ? (Number.isFinite(Number(savedLast.puttFeet)) ? Number(savedLast.puttFeet) : Math.max(1, Math.round(yards)))
-            : null,
+          puttFeet: null,
           windClubs: Number.isFinite(Number(savedLast.windClubs)) ? Number(savedLast.windClubs) : 0,
           holeClubs: Number.isFinite(Number(savedLast.holeClubs)) ? Number(savedLast.holeClubs) : 0,
           greenClubs: Number.isFinite(Number(savedLast.greenClubs)) ? Number(savedLast.greenClubs) : 0,
@@ -1558,11 +1553,11 @@
         document.getElementById("conditionsSummary").innerText =
           conditionsSummaryText();
         const previewTitle = nextHaikuTokens[0] === "putt" && hasPreview
-          ? `P (${yPreview} ft)`
+          ? `P (${yPreview} paces)`
           : previewClub;
         document.getElementById("title").innerText = last
           ? (last.isPutt
-              ? `Attached P (${last.puttFeet || last.yards} ft)`
+              ? `Attached P (${last.yards} paces)`
               : `Attached ${last.club}`)
           : `Attached ${previewTitle}`;
 
