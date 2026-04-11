@@ -857,6 +857,7 @@
 
       function tokenEmoji(token, index) {
         const value = String(token ?? "");
+        if (value === "putt") return "⛳";
         if (/^[0-9]$/.test(value)) return keycapDigit(value);
         if (value === "up") return "⬆️";
         if (value === "down") return "⬇️";
@@ -866,6 +867,7 @@
 
       function normalizeDigitToken(token, index) {
         const value = String(token ?? "").trim();
+        if (index === 0 && value === "putt") return "putt";
         if (/^[0-9]$/.test(value)) return value;
         if (index < 2 && (value === "up" || value === "down")) return value;
         if (index === 2 && value === "grass") return "grass";
@@ -1201,13 +1203,16 @@
         return { hole: previousShot.hole, shot: previousShot.shot + 1 };
       }
 
-      function makeShot(yards, shotConditions, position) {
-        const playYards = adjustedYards(
-          yards,
-          shotConditions.windClubs,
-          shotConditions.holeClubs,
-          shotConditions.greenClubs,
-        );
+      function makeShot(yards, shotConditions, position, options = {}) {
+        const isPutt = !!options.isPutt;
+        const playYards = isPutt
+          ? Math.max(1, Math.round(Number(yards) || 0))
+          : adjustedYards(
+              yards,
+              shotConditions.windClubs,
+              shotConditions.holeClubs,
+              shotConditions.greenClubs,
+            );
         return {
           id: crypto.randomUUID
             ? crypto.randomUUID()
@@ -1216,7 +1221,9 @@
           shot: position.shot,
           yards,
           playYards,
-          club: club(playYards),
+          club: isPutt ? "P" : club(playYards),
+          isPutt,
+          puttFeet: isPutt ? Math.max(1, Math.round(Number(yards) || 0)) : null,
           windClubs: shotConditions.windClubs,
           holeClubs: shotConditions.holeClubs,
           greenClubs: shotConditions.greenClubs,
@@ -1233,6 +1240,10 @@
         const raw = Number.isFinite(Number(shot && shot.yards)) ? Number(shot.yards) : 0;
         const play = Number.isFinite(Number(shot && shot.playYards)) ? Number(shot.playYards) : 0;
         const clubName = shot && shot.club ? shot.club : "—";
+        if (shot && shot.isPutt) {
+          const feet = Number.isFinite(Number(shot.puttFeet)) ? Number(shot.puttFeet) : raw;
+          return `${shotLogTitle(shot)} • Putt ${feet} ft • Club P`;
+        }
         return `${shotLogTitle(shot)} • Raw ${raw} • Play ${play} • Club ${clubName}`;
       }
 
@@ -1255,12 +1266,15 @@
               : 0,
           };
           const pos = nextPosition(yards, previous);
-          const playYards = adjustedYards(
-            yards,
-            shotConditions.windClubs,
-            shotConditions.holeClubs,
-            shotConditions.greenClubs,
-          );
+          const isPutt = !!existing.isPutt;
+          const playYards = isPutt
+            ? Math.max(1, Math.round(yards))
+            : adjustedYards(
+                yards,
+                shotConditions.windClubs,
+                shotConditions.holeClubs,
+                shotConditions.greenClubs,
+              );
           const shot = {
             id:
               existing.id ||
@@ -1274,7 +1288,11 @@
             shot: pos.shot,
             yards,
             playYards,
-            club: club(playYards),
+            club: isPutt ? "P" : club(playYards),
+            isPutt,
+            puttFeet: isPutt
+              ? (Number.isFinite(Number(existing.puttFeet)) ? Number(existing.puttFeet) : Math.max(1, Math.round(yards)))
+              : null,
             windClubs: shotConditions.windClubs,
             holeClubs: shotConditions.holeClubs,
             greenClubs: shotConditions.greenClubs,
@@ -1292,6 +1310,7 @@
         const savedLast = last && typeof last === "object" ? last : null;
         const yards = Number(savedLast && savedLast.yards);
         if (!savedLast || !Number.isFinite(yards) || yards <= 0) return;
+        const recoveredIsPutt = !!savedLast.isPutt;
         const recovered = {
           id:
             savedLast.id ||
@@ -1301,18 +1320,24 @@
           hole: Number.isFinite(Number(savedLast.hole)) ? Number(savedLast.hole) : 1,
           shot: Number.isFinite(Number(savedLast.shot)) ? Number(savedLast.shot) : 1,
           yards,
-          playYards: adjustedYards(
-            yards,
-            Number.isFinite(Number(savedLast.windClubs)) ? Number(savedLast.windClubs) : 0,
-            Number.isFinite(Number(savedLast.holeClubs)) ? Number(savedLast.holeClubs) : 0,
-            Number.isFinite(Number(savedLast.greenClubs)) ? Number(savedLast.greenClubs) : 0,
-          ),
-          club: savedLast.club || club(yards),
+          playYards: recoveredIsPutt
+            ? Math.max(1, Math.round(yards))
+            : adjustedYards(
+                yards,
+                Number.isFinite(Number(savedLast.windClubs)) ? Number(savedLast.windClubs) : 0,
+                Number.isFinite(Number(savedLast.holeClubs)) ? Number(savedLast.holeClubs) : 0,
+                Number.isFinite(Number(savedLast.greenClubs)) ? Number(savedLast.greenClubs) : 0,
+              ),
+          club: recoveredIsPutt ? "P" : (savedLast.club || club(yards)),
+          isPutt: recoveredIsPutt,
+          puttFeet: recoveredIsPutt
+            ? (Number.isFinite(Number(savedLast.puttFeet)) ? Number(savedLast.puttFeet) : Math.max(1, Math.round(yards)))
+            : null,
           windClubs: Number.isFinite(Number(savedLast.windClubs)) ? Number(savedLast.windClubs) : 0,
           holeClubs: Number.isFinite(Number(savedLast.holeClubs)) ? Number(savedLast.holeClubs) : 0,
           greenClubs: Number.isFinite(Number(savedLast.greenClubs)) ? Number(savedLast.greenClubs) : 0,
         };
-        recovered.club = club(recovered.playYards);
+        recovered.club = recoveredIsPutt ? "P" : club(recovered.playYards);
         shots = [recovered];
         last = recovered;
       }
@@ -1471,20 +1496,36 @@
                 { value: "9", label: "9️⃣" },
                 { value: "grass", label: "🌿" },
               ]
-            : [
-                { value: "up", label: "⬆️" },
-                { value: "down", label: "⬇️" },
-                { value: "0", label: "0️⃣" },
-                { value: "1", label: "1️⃣" },
-                { value: "2", label: "2️⃣" },
-                { value: "3", label: "3️⃣" },
-                { value: "4", label: "4️⃣" },
-                { value: "5", label: "5️⃣" },
-                { value: "6", label: "6️⃣" },
-                { value: "7", label: "7️⃣" },
-                { value: "8", label: "8️⃣" },
-                { value: "9", label: "9️⃣" },
-              ];
+            : activeDigitIndex === 0
+              ? [
+                  { value: "putt", label: "⛳" },
+                  { value: "up", label: "⬆️" },
+                  { value: "down", label: "⬇️" },
+                  { value: "0", label: "0️⃣" },
+                  { value: "1", label: "1️⃣" },
+                  { value: "2", label: "2️⃣" },
+                  { value: "3", label: "3️⃣" },
+                  { value: "4", label: "4️⃣" },
+                  { value: "5", label: "5️⃣" },
+                  { value: "6", label: "6️⃣" },
+                  { value: "7", label: "7️⃣" },
+                  { value: "8", label: "8️⃣" },
+                  { value: "9", label: "9️⃣" },
+                ]
+              : [
+                  { value: "up", label: "⬆️" },
+                  { value: "down", label: "⬇️" },
+                  { value: "0", label: "0️⃣" },
+                  { value: "1", label: "1️⃣" },
+                  { value: "2", label: "2️⃣" },
+                  { value: "3", label: "3️⃣" },
+                  { value: "4", label: "4️⃣" },
+                  { value: "5", label: "5️⃣" },
+                  { value: "6", label: "6️⃣" },
+                  { value: "7", label: "7️⃣" },
+                  { value: "8", label: "8️⃣" },
+                  { value: "9", label: "9️⃣" },
+                ];
         card.classList.remove("hidden");
         title.innerText = `Set digit ${activeDigitIndex + 1} for next shot`;
         wrap.innerHTML = "";
@@ -1516,9 +1557,14 @@
           `Hole ${projected.hole} • Shot ${projected.shot} • Yards ${hasPreview ? yPreview : "—"} • Play ${hasPreview ? previewAdjusted : "—"} • Club ${hasPreview ? previewClub : "—"}`;
         document.getElementById("conditionsSummary").innerText =
           conditionsSummaryText();
+        const previewTitle = nextHaikuTokens[0] === "putt" && hasPreview
+          ? `P (${yPreview} ft)`
+          : previewClub;
         document.getElementById("title").innerText = last
-          ? `Attached ${last.club}`
-          : `Attached ${previewClub}`;
+          ? (last.isPutt
+              ? `Attached P (${last.puttFeet || last.yards} ft)`
+              : `Attached ${last.club}`)
+          : `Attached ${previewTitle}`;
 
         const h = document.getElementById("haiku");
         h.innerHTML = "";
@@ -1592,6 +1638,27 @@
       function commitSelectedNextDistance() {
         const selectedYards = resolvedNextHaikuDistance();
         if (!selectedYards) return;
+        const isPutt = nextHaikuTokens[0] === "putt";
+        if (isPutt) {
+          const pos = nextPosition(selectedYards);
+          const newShot = makeShot(
+            selectedYards,
+            { windClubs, holeClubs, greenClubs },
+            pos,
+            { isPutt: true },
+          );
+          last = newShot;
+          shots.unshift(newShot);
+          recomputeShots();
+          input = "";
+          nextHaikuDistance = 0;
+          nextHaikuTokens = defaultNextHaikuTokens();
+          activeDigitIndex = null;
+          renderCourseMemory();
+          renderHaiku(true);
+          saveAll();
+          return;
+        }
         input = String(selectedYards);
         nextHaikuDistance = 0;
         nextHaikuTokens = defaultNextHaikuTokens();
