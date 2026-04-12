@@ -113,10 +113,6 @@
         display: none !important;
       }
 
-      #display.hidden,
-      #pad.hidden {
-        display: none !important;
-      }
 
       .keypadBar {
         position: sticky;
@@ -187,25 +183,6 @@
         border-color: var(--danger);
       }
 
-      .statusLine,
-      .savedLine,
-      .conditionsSummary {
-        text-align: center;
-        color: var(--muted);
-      }
-      .statusLine {
-        margin-top: 10px;
-        padding-top: 8px;
-        border-top: 1px solid var(--border);
-        font-size: 14px;
-        line-height: 1.3;
-        min-height: 20px;
-      }
-      .conditionsSummary {
-        font-size: 12px;
-        margin-top: 6px;
-        min-height: 16px;
-      }
       .savedLine {
         font-size: 12px;
         margin-top: 6px;
@@ -478,43 +455,82 @@
         justify-content: center;
         gap: 8px;
         flex-wrap: wrap;
+        cursor: pointer;
       }
       .distanceLabel,
       .distanceSuffix {
         white-space: nowrap;
       }
-      .digitWrap {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
+      .distanceValue {
+        font-weight: 900;
+        letter-spacing: 0.04em;
       }
-      .digitBtn {
-        min-width: 42px;
-        padding: 10px 8px;
+      .distancePopover {
+        margin-top: 8px;
+        display: grid;
+        gap: 8px;
+      }
+      .distancePad {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 8px;
+      }
+      .distanceKey {
+        min-height: 46px;
+        padding: 8px 0;
+        font-size: 18px;
+        line-height: 1;
+        border-radius: 12px;
+        border: 1px solid var(--border2);
+        background: #162131;
+      }
+      .surfaceIcons {
+        display: flex;
+        justify-content: center;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+      .toolBtn {
+        min-height: 46px;
+        padding: 8px 0;
         border-radius: 12px;
         border: 1px solid var(--border2);
         background: #162131;
         color: var(--text);
-        font-size: 24px;
+        font-size: 18px;
         line-height: 1;
       }
-      .digitBtn.active {
+      .toolBtn.active {
         border-color: var(--primary);
         box-shadow: 0 0 0 1px var(--primary) inset;
       }
-      .digitPopover {
-        margin-top: 8px;
-        display: grid;
-        grid-template-columns: repeat(5, minmax(0, 1fr));
+      .surfaceIcon {
+        display: inline-flex;
+        align-items: center;
         gap: 6px;
+        padding: 6px 10px;
+        border-radius: 999px;
+        border: 1px solid var(--border2);
+        background: #101823;
+        color: var(--muted);
+        font-size: 13px;
       }
-      .digitPopover.hidden {
-        display: none;
+      .surfaceIcon.active {
+        color: var(--text);
+        border-color: var(--primary);
+        box-shadow: 0 0 0 1px var(--primary) inset;
       }
-      .emojiDigit {
-        padding: 10px 0;
-        font-size: 22px;
-        line-height: 1;
+      .distanceStatus {
+        text-align: center;
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 1.35;
+        margin-top: 4px;
+      }
+      .distanceStatus strong {
+        color: var(--text);
+        font-size: 20px;
+        font-weight: 900;
       }
 
       @media (max-width: 400px) {
@@ -551,30 +567,6 @@
             </div>
           </div>
 
-          <div class="display hidden" id="display" aria-hidden="true">Enter yards</div>
-
-          <div class="keypadRow hidden" id="pad" aria-hidden="true">
-            <button data-k="1">1</button>
-            <button data-k="2">2</button>
-            <button data-k="3">3</button>
-            <button data-k="4">4</button>
-            <button data-k="5">5</button>
-            <button data-k="6">6</button>
-            <button data-k="7">7</button>
-            <button data-k="8">8</button>
-            <button data-k="9">9</button>
-            <button data-k="0">0</button>
-            <button data-k="⌫">Delete</button>
-            <button data-k="C">Cancel</button>
-            <button class="primary" id="ok">OK</button>
-          </div>
-
-          <div class="statusLine hidden" id="statusText">
-            Hole 1 • Shot 1 • Yards — • Play — • Club —
-          </div>
-          <div class="conditionsSummary hidden" id="conditionsSummary">
-            Wind flat • Hole flat • Green flat
-          </div>
           <div class="savedLine" id="savedText">
             Saved locally for this device and day.
           </div>
@@ -587,9 +579,36 @@
 
       <div class="card" id="haiku"></div>
 
-      <div class="card hidden" id="digitPopoverCard">
-        <div class="logTitle" id="digitPopoverTitle">Set next-shot digit</div>
-        <div class="digitPopover" id="digitPopover"></div>
+      <div class="card hidden" id="distancePopoverCard">
+        <div class="logTitle">Set next shot distance</div>
+        <div class="distancePopover">
+          <div class="surfaceIcons" id="surfaceIcons">
+            <div class="surfaceIcon active" id="fairwayIcon">🌿 Fairway</div>
+            <div class="surfaceIcon" id="greenIcon">⛳ Green</div>
+          </div>
+          <div class="distanceReadout" id="distanceReadout">
+            <span id="distanceReadoutValue">—</span>
+            <span id="distanceReadoutUnit">yards</span>
+          </div>
+          <div class="distancePad" id="distancePad">
+            <button class="distanceKey" type="button" data-distance-key="1">1️⃣</button>
+            <button class="distanceKey" type="button" data-distance-key="2">2️⃣</button>
+            <button class="distanceKey" type="button" data-distance-key="3">3️⃣</button>
+            <button class="distanceKey" type="button" data-distance-key="4">4️⃣</button>
+            <button class="distanceKey" type="button" data-distance-key="5">5️⃣</button>
+            <button class="distanceKey" type="button" data-distance-key="6">6️⃣</button>
+            <button class="distanceKey" type="button" data-distance-key="7">7️⃣</button>
+            <button class="distanceKey" type="button" data-distance-key="8">8️⃣</button>
+            <button class="distanceKey" type="button" data-distance-key="9">9️⃣</button>
+            <button class="distanceKey secondaryBtn" type="button" id="distanceBack" aria-label="Delete last digit">⬅️</button>
+            <button class="distanceKey" type="button" data-distance-key="0">0️⃣</button>
+            <button class="distanceKey secondaryBtn" type="button" id="distanceCancel" aria-label="Cancel distance">✖️</button>
+            <button class="toolBtn" type="button" id="windQuickBtn" aria-label="Wind settings">💨</button>
+            <button class="toolBtn" type="button" id="hillsQuickBtn" aria-label="Hill settings">⛰️</button>
+            <button class="distanceKey primary" type="button" id="distanceOk" aria-label="Confirm distance">✅</button>
+          </div>
+          <div class="distanceStatus" id="distanceStatus">Selected distance: <strong>—</strong> yards</div>
+        </div>
       </div>
 
       <div class="card courseMemoryCard">
@@ -806,14 +825,14 @@
       const ROUND_STORE = "rounds";
       const SETTINGS_STORE = "settings";
       const LOCAL_PREFIX = "golf-tools-backup";
+      const MAX_ENTRY_DISTANCE = 800;
 
       let db;
-      let input = "";
       let last = null;
       let shots = [];
       let nextHaikuDistance = 0;
-      let nextHaikuTokens = ["up", "up", "0"];
-      let activeDigitIndex = null;
+      let distancePopoverOpen = false;
+      let draftDistanceInput = "";
       let activeTab = "haiku";
       let liveUrlValue = "";
       let windClubs = 0;
@@ -846,86 +865,11 @@
       }
 
 
-      function defaultNextHaikuTokens() {
-        return ["up", "up", "0"];
-      }
-      function keycapDigit(value) {
-        const digits = ["0️⃣", "1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣", "7️⃣", "8️⃣", "9️⃣"];
-        const n = Number(value);
-        return Number.isInteger(n) && n >= 0 && n <= 9 ? digits[n] : "0️⃣";
-      }
-
-      function tokenEmoji(token, index) {
-        const value = String(token ?? "");
-        if (value === "putt") return "⛳";
-        if (/^[0-9]$/.test(value)) return keycapDigit(value);
-        if (value === "up") return "⬆️";
-        if (value === "down") return "⬇️";
-        if (value === "grass") return "🌿";
-        return index === 2 ? "🌿" : "▫️";
-      }
-
-      function normalizeDigitToken(token, index) {
-        const value = String(token ?? "").trim();
-        if (index === 0 && value === "putt") return "putt";
-        if (/^[0-9]$/.test(value)) return value;
-        if (index < 2 && (value === "up" || value === "down")) return value;
-        if (index === 2 && value === "grass") return "grass";
-        return "";
-      }
 
       function clampDistance(value) {
         const n = Number(value);
         if (!Number.isFinite(n) || n < 0) return 0;
-        return Math.max(0, Math.min(999, Math.round(n)));
-      }
-
-      function tokensFromDistance(value) {
-        const safe = clampDistance(value);
-        if (!safe) return defaultNextHaikuTokens();
-        const parts = String(safe).split("");
-        const slots = ["", "", ""];
-        const offset = 3 - parts.length;
-        parts.forEach((part, i) => {
-          slots[offset + i] = part;
-        });
-        return slots;
-      }
-
-      function normalizeStoredTokens(tokens) {
-        if (!Array.isArray(tokens)) return null;
-        const normalized = [0, 1, 2].map((index) =>
-          normalizeDigitToken(tokens[index], index),
-        );
-        const hasAny = normalized.some((token) => token !== "");
-        return hasAny ? normalized : defaultNextHaikuTokens();
-      }
-
-      function syncTokensFromDistanceIfNeeded() {
-        const normalized = normalizeStoredTokens(nextHaikuTokens);
-        if (normalized) {
-          nextHaikuTokens = normalized;
-          return;
-        }
-        nextHaikuTokens = tokensFromDistance(nextHaikuDistance);
-      }
-
-      function resolvedNextHaikuDistance() {
-        syncTokensFromDistanceIfNeeded();
-        const numeric = nextHaikuTokens.filter((token) => /^[0-9]$/.test(token)).join("");
-        if (numeric) {
-          const manual = clampDistance(Number(numeric));
-          if (manual > 0) return manual;
-        }
-        const holeYards = readHoleYardsFromMarkdown(getCurrentHoleNumber());
-        return Number.isFinite(holeYards) && holeYards > 0
-          ? clampDistance(holeYards)
-          : 0;
-      }
-
-      function nextDistanceDigits() {
-        syncTokensFromDistanceIfNeeded();
-        return [...nextHaikuTokens];
+        return Math.max(0, Math.min(MAX_ENTRY_DISTANCE, Math.round(n)));
       }
 
       function readHoleYardsFromMarkdown(holeNumber) {
@@ -938,23 +882,91 @@
         return Number.isFinite(yards) ? yards : null;
       }
 
-      function syncNextDistanceFromContext(forceFromMarkdown = false) {
-        if (forceFromMarkdown) {
-          const holeYards = readHoleYardsFromMarkdown(getCurrentHoleNumber());
-          nextHaikuDistance = 0;
-          nextHaikuTokens = defaultNextHaikuTokens();
-          return;
-        }
-        syncTokensFromDistanceIfNeeded();
-        const numeric = nextHaikuTokens.filter((token) => /^[0-9]$/.test(token)).join("");
-        nextHaikuDistance = numeric ? clampDistance(Number(numeric)) : 0;
+      function resolvedNextHaikuDistance() {
+        if (nextHaikuDistance > 0) return clampDistance(nextHaikuDistance);
+        const holeYards = readHoleYardsFromMarkdown(getCurrentHoleNumber());
+        return Number.isFinite(holeYards) && holeYards > 0
+          ? clampDistance(holeYards)
+          : 0;
       }
 
-      function setNextDistanceDigit(index, token) {
-        syncTokensFromDistanceIfNeeded();
-        nextHaikuTokens[index] = normalizeDigitToken(token, index);
-        const numeric = nextHaikuTokens.filter((value) => /^[0-9]$/.test(value)).join("");
-        nextHaikuDistance = numeric ? clampDistance(Number(numeric)) : 0;
+      function syncNextDistanceFromContext(forceFromMarkdown = false) {
+        if (forceFromMarkdown) {
+          nextHaikuDistance = 0;
+          return;
+        }
+        nextHaikuDistance = clampDistance(nextHaikuDistance);
+      }
+
+      function distanceInputDisplay() {
+        return draftDistanceInput ? String(Number(draftDistanceInput)) : "";
+      }
+
+      function openDistancePopover() {
+        draftDistanceInput = "";
+        distancePopoverOpen = true;
+        renderHaiku();
+      }
+
+      function closeDistancePopover(resetDraft = true) {
+        distancePopoverOpen = false;
+        if (resetDraft) draftDistanceInput = "";
+        renderHaiku();
+      }
+
+      function appendDistanceDigit(digit) {
+        const current = distanceInputDisplay();
+        const nextRaw = current === "0" ? String(digit) : current + String(digit);
+        const normalized = String(Number(nextRaw));
+        if (!normalized || Number(normalized) > MAX_ENTRY_DISTANCE) return;
+        draftDistanceInput = normalized;
+        renderDistancePopover();
+      }
+
+      function backspaceDistanceDigit() {
+        const current = distanceInputDisplay();
+        if (!current) return;
+        draftDistanceInput = current.slice(0, -1);
+        renderDistancePopover();
+      }
+
+      function confirmDistancePopover() {
+        const selected = clampDistance(Number(distanceInputDisplay()));
+        if (!selected) return;
+        nextHaikuDistance = selected;
+        distancePopoverOpen = false;
+        draftDistanceInput = "";
+        commit(selected);
+      }
+
+      function renderDistancePopover() {
+        const card = document.getElementById("distancePopoverCard");
+        const status = document.getElementById("distanceStatus");
+        const readoutValue = document.getElementById("distanceReadoutValue");
+        const readoutUnit = document.getElementById("distanceReadoutUnit");
+        const backBtn = document.getElementById("distanceBack");
+        const okBtn = document.getElementById("distanceOk");
+        const fairwayIcon = document.getElementById("fairwayIcon");
+        const greenIcon = document.getElementById("greenIcon");
+        const windQuickBtn = document.getElementById("windQuickBtn");
+        const hillsQuickBtn = document.getElementById("hillsQuickBtn");
+        if (!distancePopoverOpen) {
+          card.classList.add("hidden");
+          return;
+        }
+        card.classList.remove("hidden");
+        const value = distanceInputDisplay();
+        const numericValue = Number(value || 0);
+        const isGreen = numericValue > 0 && numericValue <= 10;
+        fairwayIcon.classList.toggle("active", !isGreen);
+        greenIcon.classList.toggle("active", isGreen);
+        windQuickBtn.classList.toggle("active", windClubs !== 0);
+        hillsQuickBtn.classList.toggle("active", holeClubs !== 0 || greenClubs !== 0);
+        if (readoutValue) readoutValue.textContent = value || "—";
+        if (readoutUnit) readoutUnit.textContent = isGreen ? "paces" : "yards";
+        status.innerHTML = `Selected distance: <strong>${value || "—"}</strong> ${isGreen ? "paces" : "yards"}`;
+        backBtn.disabled = !value;
+        okBtn.disabled = !value;
       }
 
       function haiku() {
@@ -991,18 +1003,6 @@
         return `${windSummary(w)} • ${holeSummary(h)} • ${greenSummary(g)}`;
       }
 
-      function applicableConditionClubs(
-        y,
-        w = windClubs,
-        h = holeClubs,
-        g = greenClubs,
-      ) {
-        const rawYards = Number(y) || 0;
-        if (rawYards <= 10) return 0;
-        const slope = h + g;
-        if (rawYards <= SHORT_GAME_THRESHOLD) return slope;
-        return w + slope;
-      }
       function adjustedYards(y, w = windClubs, h = holeClubs, g = greenClubs) {
         const rawYards = Number(y) || 0;
 
@@ -1063,7 +1063,7 @@
         return `${LOCAL_PREFIX}-settings-${getDeviceId()}`;
       }
       function roundState() {
-        return { input, last, shots };
+        return { last, shots };
       }
       function settingsState() {
         return {
@@ -1075,7 +1075,6 @@
           courseMarkdown,
           isMemoryExpanded,
           nextHaikuDistance,
-          nextHaikuTokens,
         };
       }
 
@@ -1352,8 +1351,6 @@
       }
 
       function currentProjected() {
-        const y = input ? Number(input) : null;
-        if (Number.isFinite(y) && y > 0) return nextPosition(y);
         if (last) return nextPosition();
         return { hole: 1, shot: 1 };
       }
@@ -1446,6 +1443,8 @@
         ).trim();
         isMemoryExpanded = false;
         syncNextDistanceFromContext(true);
+        distancePopoverOpen = false;
+        draftDistanceInput = "";
         renderCourseMemory();
         renderHaiku();
         saveAll();
@@ -1460,101 +1459,33 @@
         isMemoryExpanded = false;
         document.getElementById("mdTextarea").value = "";
         syncNextDistanceFromContext(true);
+        distancePopoverOpen = false;
+        draftDistanceInput = "";
         renderCourseMemory();
         renderHaiku();
         saveAll();
         closeMdModal();
       }
 
-      function renderDigitPopover() {
-        const card = document.getElementById("digitPopoverCard");
-        const wrap = document.getElementById("digitPopover");
-        const title = document.getElementById("digitPopoverTitle");
-        const digits = nextDistanceDigits();
-        if (activeDigitIndex === null) {
-          card.classList.add("hidden");
-          wrap.innerHTML = "";
-          return;
-        }
-        const options =
-          activeDigitIndex === 2
-            ? [
-                { value: "0", label: "0️⃣" },
-                { value: "1", label: "1️⃣" },
-                { value: "2", label: "2️⃣" },
-                { value: "3", label: "3️⃣" },
-                { value: "4", label: "4️⃣" },
-                { value: "5", label: "5️⃣" },
-                { value: "6", label: "6️⃣" },
-                { value: "7", label: "7️⃣" },
-                { value: "8", label: "8️⃣" },
-                { value: "9", label: "9️⃣" },
-                { value: "grass", label: "🌿" },
-              ]
-            : activeDigitIndex === 0
-              ? [
-                  { value: "putt", label: "⛳" },
-                  { value: "up", label: "⬆️" },
-                  { value: "down", label: "⬇️" },
-                  { value: "0", label: "0️⃣" },
-                  { value: "1", label: "1️⃣" },
-                  { value: "2", label: "2️⃣" },
-                  { value: "3", label: "3️⃣" },
-                  { value: "4", label: "4️⃣" },
-                  { value: "5", label: "5️⃣" },
-                  { value: "6", label: "6️⃣" },
-                  { value: "7", label: "7️⃣" },
-                  { value: "8", label: "8️⃣" },
-                  { value: "9", label: "9️⃣" },
-                ]
-              : [
-                  { value: "up", label: "⬆️" },
-                  { value: "down", label: "⬇️" },
-                  { value: "0", label: "0️⃣" },
-                  { value: "1", label: "1️⃣" },
-                  { value: "2", label: "2️⃣" },
-                  { value: "3", label: "3️⃣" },
-                  { value: "4", label: "4️⃣" },
-                  { value: "5", label: "5️⃣" },
-                  { value: "6", label: "6️⃣" },
-                  { value: "7", label: "7️⃣" },
-                  { value: "8", label: "8️⃣" },
-                  { value: "9", label: "9️⃣" },
-                ];
-        card.classList.remove("hidden");
-        title.innerText = `Set digit ${activeDigitIndex + 1} for next shot`;
-        wrap.innerHTML = "";
-        options.forEach((option) => {
-          const btn = document.createElement("button");
-          btn.className =
-            "emojiDigit" + (digits[activeDigitIndex] === option.value ? " active" : "");
-          btn.dataset.digitValue = option.value;
-          btn.type = "button";
-          btn.innerText = option.label;
-          wrap.appendChild(btn);
-        });
-      }
-
       function renderHaiku(triggerShedPulse = false) {
         syncNextDistanceFromContext();
         const fallbackDistance = resolvedNextHaikuDistance();
-        const rawPreview = input ? Number(input) : null;
-        const yPreview = Number.isFinite(rawPreview) && rawPreview > 0 ? rawPreview : fallbackDistance;
-        const hasPreview = Number.isFinite(yPreview) && yPreview > 0;
         const projected = currentProjected();
-        const previewAdjusted = hasPreview ? adjustedYards(yPreview) : null;
-        const previewClub = hasPreview ? club(previewAdjusted) : "—";
+        const displayDistance = distancePopoverOpen
+          ? clampDistance(Number(distanceInputDisplay())) || 0
+          : last && Number.isFinite(Number(last.yards))
+            ? clampDistance(Number(last.yards))
+            : fallbackDistance;
+        const hasDisplayDistance = Number.isFinite(displayDistance) && displayDistance > 0;
+        const displayAdjusted = hasDisplayDistance ? adjustedYards(displayDistance) : null;
+        const displayIsPutt = hasDisplayDistance && displayDistance <= 10;
+        const displayClub = displayIsPutt ? "P" : hasDisplayDistance ? club(displayAdjusted) : "—";
 
-        document.getElementById("display").innerText = input || (fallbackDistance ? String(fallbackDistance) : "Enter yards");
         document.getElementById("holeShotPill").innerText =
           `Hole ${projected.hole} • Shot ${projected.shot}`;
-        document.getElementById("statusText").innerText =
-          `Hole ${projected.hole} • Shot ${projected.shot} • Yards ${hasPreview ? yPreview : "—"} • Play ${hasPreview ? previewAdjusted : "—"} • Club ${hasPreview ? previewClub : "—"}`;
-        document.getElementById("conditionsSummary").innerText =
-          conditionsSummaryText();
-        const previewTitle = nextHaikuTokens[0] === "putt" && hasPreview
-          ? `P (${yPreview} paces)`
-          : previewClub;
+        const previewTitle = displayIsPutt && hasDisplayDistance
+          ? `P (${displayDistance} paces)`
+          : displayClub;
         document.getElementById("title").innerText = last
           ? (last.isPutt
               ? `Attached P (${last.yards} paces)`
@@ -1563,7 +1494,6 @@
 
         const h = document.getElementById("haiku");
         h.innerHTML = "";
-        const digits = nextDistanceDigits();
         haiku().forEach((line, index) => {
           const d = document.createElement("div");
           d.className = "line" + (index === 2 ? " shedLine" : "");
@@ -1571,27 +1501,23 @@
             d.innerText = line;
           } else {
             d.classList.add("distanceLine");
+            d.dataset.distanceTrigger = "true";
+            d.setAttribute("role", "button");
+            d.setAttribute("tabindex", "0");
+
             const label = document.createElement("span");
             label.className = "distanceLabel";
             label.innerText = "Step";
             d.appendChild(label);
 
-            const digitWrap = document.createElement("span");
-            digitWrap.className = "digitWrap";
-            digits.forEach((digit, digitIndex) => {
-              const btn = document.createElement("button");
-              btn.className = "digitBtn" + (activeDigitIndex === digitIndex ? " active" : "");
-              btn.type = "button";
-              btn.dataset.digitIndex = String(digitIndex);
-              btn.setAttribute("aria-label", `Set digit ${digitIndex + 1}`);
-              btn.innerText = tokenEmoji(digit, digitIndex);
-              digitWrap.appendChild(btn);
-            });
-            d.appendChild(digitWrap);
+            const value = document.createElement("span");
+            value.className = "distanceValue";
+            value.innerText = hasDisplayDistance ? displayDistance : "—";
+            d.appendChild(value);
 
             const suffix = document.createElement("span");
             suffix.className = "distanceSuffix";
-            suffix.innerText = "yards";
+            suffix.innerText = displayIsPutt && hasDisplayDistance ? "paces" : "yards";
             d.appendChild(suffix);
           }
           if (index === 2 && triggerShedPulse) {
@@ -1604,7 +1530,7 @@
           }
           h.appendChild(d);
         });
-        renderDigitPopover();
+        renderDistancePopover();
 
         document.getElementById("logTitle").innerText =
           `SHOT LOG (${shots.length} ${shots.length === 1 ? "shot" : "shots"})`;
@@ -1623,54 +1549,36 @@
             d.innerHTML = `
         <div class="logMain">${shotLogMain(s)}</div>
         <div class="logMeta">${conditionsSummaryText(s.windClubs, s.holeClubs, s.greenClubs)}</div>
-        <div class="logMeta hidden">${shotRuleText(s.yards)}</div>
       `;
             log.appendChild(d);
           });
         }
       }
 
+
       function commitSelectedNextDistance() {
         const selectedYards = resolvedNextHaikuDistance();
         if (!selectedYards) return;
-        const isPutt = nextHaikuTokens[0] === "putt";
-        if (isPutt) {
-          const pos = nextPosition(selectedYards);
-          const newShot = makeShot(
-            selectedYards,
-            { windClubs, holeClubs, greenClubs },
-            pos,
-            { isPutt: true },
-          );
-          last = newShot;
-          shots.unshift(newShot);
-          recomputeShots();
-          input = "";
-          nextHaikuDistance = 0;
-          nextHaikuTokens = defaultNextHaikuTokens();
-          activeDigitIndex = null;
-          renderCourseMemory();
-          renderHaiku(true);
-          saveAll();
-          return;
-        }
-        input = String(selectedYards);
-        nextHaikuDistance = 0;
-        nextHaikuTokens = defaultNextHaikuTokens();
-        activeDigitIndex = null;
-        commit();
+        commit(selectedYards);
       }
 
-      function commit() {
-        const y = Number(input);
+      function commit(yards) {
+        const y = clampDistance(yards);
         if (!y) return;
         const pos = nextPosition(y);
-        const newShot = makeShot(y, { windClubs, holeClubs, greenClubs }, pos);
+        const isPutt = y <= 10;
+        const newShot = makeShot(
+          y,
+          { windClubs, holeClubs, greenClubs },
+          pos,
+          { isPutt },
+        );
         last = newShot;
         shots.unshift(newShot);
         recomputeShots();
-        input = "";
-        activeDigitIndex = null;
+        nextHaikuDistance = 0;
+        distancePopoverOpen = false;
+        draftDistanceInput = "";
         renderCourseMemory();
         renderHaiku(true);
         saveAll();
@@ -1681,11 +1589,11 @@
           "Start over and clear today's round on this device?",
         );
         if (!ok) return;
-        input = "";
         last = null;
         shots = [];
         nextHaikuDistance = 0;
-        nextHaikuTokens = defaultNextHaikuTokens();
+        distancePopoverOpen = false;
+        draftDistanceInput = "";
         syncNextDistanceFromContext(true);
         renderCourseMemory();
         renderHaiku();
@@ -1740,9 +1648,7 @@
           holeSummary(draftHoleClubs);
         document.getElementById("greenValue").innerText =
           greenSummary(draftGreenClubs);
-        const previewYards = input
-          ? Number(input)
-          : last
+        const previewYards = last
             ? Number(last.yards)
             : SHORT_GAME_THRESHOLD;
         document.getElementById("conditionsRuleText").innerText =
@@ -1808,17 +1714,6 @@
       }
 
       // events
-      const pad = document.getElementById("pad");
-      pad.onclick = (e) => {
-        const k = e.target.dataset.k;
-        if (!k) return;
-        if (k === "C") input = "";
-        else if (k === "⌫") input = input.slice(0, -1);
-        else input += k;
-        renderHaiku();
-        saveAll();
-      };
-      document.getElementById("ok").onclick = commit;
       document.getElementById("clearLink").onclick = clearAndStartOver;
       document.getElementById("tabHaiku").onclick = () => setActiveTab("haiku");
       document.getElementById("tabLive").onclick = () => setActiveTab("live");
@@ -1851,30 +1746,48 @@
         openEditModal(item.dataset.shotId);
       });
       document.getElementById("haiku").addEventListener("click", (e) => {
-        const btn = e.target.closest(".digitBtn");
-        if (!btn) return;
+        const trigger = e.target.closest("[data-distance-trigger='true']");
+        if (!trigger) return;
         e.stopPropagation();
-        const idx = Number(btn.dataset.digitIndex);
-        activeDigitIndex = activeDigitIndex === idx ? null : idx;
-        renderHaiku();
+        openDistancePopover();
       });
-      document.getElementById("digitPopoverCard").addEventListener("click", (e) => {
+      document.getElementById("haiku").addEventListener("keydown", (e) => {
+        const trigger = e.target.closest("[data-distance-trigger='true']");
+        if (!trigger) return;
+        if (e.key !== "Enter" && e.key !== " ") return;
+        e.preventDefault();
+        openDistancePopover();
+      });
+      document.getElementById("distancePopoverCard").addEventListener("click", (e) => {
         e.stopPropagation();
       });
-      document.getElementById("digitPopover").addEventListener("click", (e) => {
-        const btn = e.target.closest(".emojiDigit");
-        if (!btn || activeDigitIndex === null) return;
-        e.stopPropagation();
-        const selectedIndex = activeDigitIndex;
-        setNextDistanceDigit(selectedIndex, btn.dataset.digitValue);
-        if (selectedIndex === 2) {
-          commitSelectedNextDistance();
-          return;
+      document.getElementById("distancePad").addEventListener("click", (e) => {
+        const digitBtn = e.target.closest("[data-distance-key]");
+        if (digitBtn) {
+          e.stopPropagation();
+          appendDistanceDigit(digitBtn.dataset.distanceKey);
         }
-        activeDigitIndex = null;
-        renderHaiku();
-        saveAll();
       });
+      document.getElementById("distanceBack").onclick = (e) => {
+        e.stopPropagation();
+        backspaceDistanceDigit();
+      };
+      document.getElementById("distanceOk").onclick = (e) => {
+        e.stopPropagation();
+        confirmDistancePopover();
+      };
+      document.getElementById("distanceCancel").onclick = (e) => {
+        e.stopPropagation();
+        closeDistancePopover();
+      };
+      document.getElementById("windQuickBtn").onclick = (e) => {
+        e.stopPropagation();
+        openWeatherModal();
+      };
+      document.getElementById("hillsQuickBtn").onclick = (e) => {
+        e.stopPropagation();
+        openWeatherModal();
+      };
       document.getElementById("closeEdit").onclick = closeEditModal;
       document.getElementById("cancelEdit").onclick = closeEditModal;
       document.getElementById("saveEdit").onclick = saveEditedShot;
@@ -1896,10 +1809,9 @@
         if (e.target.id === "editModal") closeEditModal();
       });
       document.addEventListener("click", (e) => {
-        if (!e.target.closest("#haiku") && !e.target.closest("#digitPopoverCard")) {
-          if (activeDigitIndex !== null) {
-            activeDigitIndex = null;
-            renderHaiku();
+        if (!e.target.closest("#haiku") && !e.target.closest("#distancePopoverCard")) {
+          if (distancePopoverOpen) {
+            closeDistancePopover();
           }
         }
       });
@@ -1912,7 +1824,6 @@
       async function init() {
         const local = loadLocalFallback();
         if (local.round) {
-          input = local.round.input || "";
           last = local.round.last || null;
           shots = Array.isArray(local.round.shots) ? local.round.shots : [];
         }
@@ -1934,17 +1845,14 @@
               : courseMarkdown;
           isMemoryExpanded = !!local.settings.isMemoryExpanded;
           nextHaikuDistance = Number.isFinite(Number(local.settings.nextHaikuDistance))
-            ? Number(local.settings.nextHaikuDistance)
+            ? clampDistance(local.settings.nextHaikuDistance)
             : nextHaikuDistance;
-          nextHaikuTokens = normalizeStoredTokens(local.settings.nextHaikuTokens)
-            || nextHaikuTokens;
         }
 
         try {
           await openDB();
           const roundRec = await loadRoundFromIndexedDB();
           if (roundRec && roundRec.state) {
-            input = roundRec.state.input || input;
             last = roundRec.state.last || last;
             shots = Array.isArray(roundRec.state.shots)
               ? roundRec.state.shots
@@ -1969,10 +1877,8 @@
                 : courseMarkdown;
             isMemoryExpanded = !!settingsRec.state.isMemoryExpanded;
             nextHaikuDistance = Number.isFinite(Number(settingsRec.state.nextHaikuDistance))
-              ? Number(settingsRec.state.nextHaikuDistance)
+              ? clampDistance(settingsRec.state.nextHaikuDistance)
               : nextHaikuDistance;
-            nextHaikuTokens = normalizeStoredTokens(settingsRec.state.nextHaikuTokens)
-              || nextHaikuTokens;
           }
         } catch (e) {
           console.error("Persistence init failed", e);
@@ -1981,9 +1887,11 @@
         recoverShotsFromLastIfNeeded();
         ensureOpeningShotFromMarkdown();
         recomputeShots();
-        if (!input && !clampDistance(nextHaikuDistance)) {
+        if (!clampDistance(nextHaikuDistance)) {
           syncNextDistanceFromContext(true);
         }
+        distancePopoverOpen = false;
+        draftDistanceInput = "";
 
         if (liveUrlValue) {
           document.getElementById("liveUrl").value = liveUrlValue;
