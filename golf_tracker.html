@@ -113,7 +113,6 @@
         display: none !important;
       }
 
-
       .keypadBar {
         position: sticky;
         top: 105px;
@@ -447,7 +446,6 @@
         resize: vertical;
         font: inherit;
       }
-
 
       .distanceLine {
         display: flex;
@@ -863,8 +861,6 @@
         }
         return best[0];
       }
-
-
 
       function clampDistance(value) {
         const n = Number(value);
@@ -1300,7 +1296,6 @@
         last = shots.length ? shots[0] : null;
       }
 
-
       function recoverShotsFromLastIfNeeded() {
         if (Array.isArray(shots) && shots.length) return;
         const savedLast = last && typeof last === "object" ? last : null;
@@ -1336,7 +1331,6 @@
         last = recovered;
       }
 
-
       function ensureOpeningShotFromMarkdown() {
         if ((Array.isArray(shots) && shots.length) || last) return;
         const openingYards = readHoleYardsFromMarkdown(1);
@@ -1351,7 +1345,13 @@
       }
 
       function currentProjected() {
-        if (last) return nextPosition();
+        if (
+          last &&
+          Number.isFinite(Number(last.hole)) &&
+          Number.isFinite(Number(last.shot))
+        ) {
+          return { hole: Number(last.hole), shot: Number(last.shot) };
+        }
         return { hole: 1, shot: 1 };
       }
 
@@ -1554,7 +1554,6 @@
           });
         }
       }
-
 
       function commitSelectedNextDistance() {
         const selectedYards = resolvedNextHaikuDistance();
