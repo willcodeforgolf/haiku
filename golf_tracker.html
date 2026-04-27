@@ -965,10 +965,28 @@
         okBtn.disabled = !value;
       }
 
-      function haiku() {
+      function swingCadence(distance, isPutt = false) {
+        const y = Number(distance) || 0;
+        if (!y) return "—";
+        if (isPutt) return "1 2 1 2";
+        if (y > 100) return "1 2 3 4";
+        return "Synced Sawish Swish";
+      }
+
+      function titleCadence(cadence) {
+        if (cadence === "1 2 3 4") return "1-2-3-4";
+        if (cadence === "1 2 1 2") return "1-2 1-2";
+        return cadence;
+      }
+
+      function haiku(cadence = "—", projected = currentProjected()) {
+        const isFirstShot = projected && Number(projected.shot) === 1;
+        const firstLine = isFirstShot
+          ? "Coil. High. Address trust."
+          : "Clip. Hold. Address trust.";
         return [
-          "Coil. High. Address trust.",
-          "Eye Rock 1 2 3 4 High",
+          firstLine,
+          `Ease See ${cadence} Send`,
           null,
         ];
       }
@@ -1483,18 +1501,15 @@
 
         document.getElementById("holeShotPill").innerText =
           `Hole ${projected.hole} • Shot ${projected.shot}`;
-        const previewTitle = displayIsPutt && hasDisplayDistance
-          ? `P (${displayDistance} paces)`
-          : displayClub;
-        document.getElementById("title").innerText = last
-          ? (last.isPutt
-              ? `Attached P (${last.yards} paces)`
-              : `Attached ${last.club}`)
-          : `Attached ${previewTitle}`;
+        const cadence = swingCadence(displayDistance, displayIsPutt);
+        const titleFocus = !hasDisplayDistance
+          ? "Attached —"
+          : `Attached ${titleCadence(cadence)}`;
+        document.getElementById("title").innerText = titleFocus;
 
         const h = document.getElementById("haiku");
         h.innerHTML = "";
-        haiku().forEach((line, index) => {
+        haiku(cadence, projected).forEach((line, index) => {
           const d = document.createElement("div");
           d.className = "line" + (index === 2 ? " shedLine" : "");
           if (index !== 2) {
@@ -1505,20 +1520,20 @@
             d.setAttribute("role", "button");
             d.setAttribute("tabindex", "0");
 
-            const label = document.createElement("span");
-            label.className = "distanceLabel";
-            label.innerText = "Step";
-            d.appendChild(label);
-
             const value = document.createElement("span");
             value.className = "distanceValue";
             value.innerText = hasDisplayDistance ? displayDistance : "—";
             d.appendChild(value);
 
-            const suffix = document.createElement("span");
-            suffix.className = "distanceSuffix";
-            suffix.innerText = displayIsPutt && hasDisplayDistance ? "paces" : "yards";
-            d.appendChild(suffix);
+            const stepsSuffix = document.createElement("span");
+            stepsSuffix.className = "distanceSuffix";
+            stepsSuffix.innerText = "steps";
+            d.appendChild(stepsSuffix);
+
+            const clubSuffix = document.createElement("span");
+            clubSuffix.className = "distanceSuffix";
+            clubSuffix.innerText = hasDisplayDistance ? displayClub : "—";
+            d.appendChild(clubSuffix);
           }
           if (index === 2 && triggerShedPulse) {
             d.classList.add("shedPulse");
