@@ -970,24 +970,20 @@
         if (!y) return "—";
         if (isPutt) return "1 2 1 2";
         if (y > 100) return "1 2 3 4";
-        return "Synced Sawish Swish";
+        return "Sawish Swish";
       }
 
-      function titleCadence(cadence) {
-        if (cadence === "1 2 3 4") return "1-2-3-4";
-        if (cadence === "1 2 1 2") return "1-2 1-2";
-        return cadence;
+      function titleClubToken(clubName, isPutt = false) {
+        if (isPutt) return "P";
+        if (clubName === "S") return "56";
+        return clubName || "—";
       }
 
-      function haiku(cadence = "—", projected = currentProjected()) {
-        const isFirstShot = projected && Number(projected.shot) === 1;
-        const firstLine = isFirstShot
-          ? "Coil. High. Address trust."
-          : "Clip. Hold. Address trust.";
+      function haiku() {
         return [
-          firstLine,
-          `Ease See ${cadence} Send`,
-          null,
+          "Club set to ball. Onnnnnne",
+          "Eye Look down. place left foot, Right",
+          "Success, Forward Press",
         ];
       }
 
@@ -1504,36 +1500,21 @@
         const cadence = swingCadence(displayDistance, displayIsPutt);
         const titleFocus = !hasDisplayDistance
           ? "Attached —"
-          : `Attached ${titleCadence(cadence)}`;
+          : `Attached ${titleClubToken(displayClub, displayIsPutt)} ${cadence}`;
         document.getElementById("title").innerText = titleFocus;
 
         const h = document.getElementById("haiku");
         h.innerHTML = "";
-        haiku(cadence, projected).forEach((line, index) => {
+        haiku().forEach((line, index) => {
           const d = document.createElement("div");
           d.className = "line" + (index === 2 ? " shedLine" : "");
-          if (index !== 2) {
-            d.innerText = line;
-          } else {
+          d.innerText = line;
+          if (index === 2) {
             d.classList.add("distanceLine");
             d.dataset.distanceTrigger = "true";
             d.setAttribute("role", "button");
             d.setAttribute("tabindex", "0");
-
-            const value = document.createElement("span");
-            value.className = "distanceValue";
-            value.innerText = hasDisplayDistance ? displayDistance : "—";
-            d.appendChild(value);
-
-            const stepsSuffix = document.createElement("span");
-            stepsSuffix.className = "distanceSuffix";
-            stepsSuffix.innerText = "steps";
-            d.appendChild(stepsSuffix);
-
-            const clubSuffix = document.createElement("span");
-            clubSuffix.className = "distanceSuffix";
-            clubSuffix.innerText = hasDisplayDistance ? displayClub : "—";
-            d.appendChild(clubSuffix);
+            d.setAttribute("title", "Tap to set next shot distance");
           }
           if (index === 2 && triggerShedPulse) {
             d.classList.add("shedPulse");
