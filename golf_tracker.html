@@ -968,9 +968,9 @@
       function swingCadence(distance, isPutt = false) {
         const y = Number(distance) || 0;
         if (!y) return "—";
-        if (isPutt) return "1 2 1 2";
+        if (isPutt) return "1 2, 1 2";
         if (y > 100) return "1 2 3 4";
-        return "Sawish Swish";
+        return "Sawish Swish Sync";
       }
 
       function titleClubToken(clubName, isPutt = false) {
@@ -979,11 +979,12 @@
         return clubName || "—";
       }
 
-      function haiku() {
+      function haiku(distance, isPutt = false) {
+        const cadence = swingCadence(distance, isPutt);
         return [
-          "Club set to ball. Onnnnnne",
-          "Eye Look down. place left foot, Right",
-          "Success, Forward Press",
+          "Club² → . Breathe",
+          "Ease left foot, then right. Forward",
+          `Steps ${cadence}`,
         ];
       }
 
@@ -1497,15 +1498,18 @@
 
         document.getElementById("holeShotPill").innerText =
           `Hole ${projected.hole} • Shot ${projected.shot}`;
+        const selectedClub = titleClubToken(displayClub, displayIsPutt);
         const cadence = swingCadence(displayDistance, displayIsPutt);
         const titleFocus = !hasDisplayDistance
-          ? "Attached —"
-          : `Attached ${titleClubToken(displayClub, displayIsPutt)} ${cadence}`;
+          ? "Attached"
+          : displayIsPutt
+            ? `Attached ${selectedClub}, ${cadence}`
+            : `Attached (${selectedClub}), ${cadence}`;
         document.getElementById("title").innerText = titleFocus;
 
         const h = document.getElementById("haiku");
         h.innerHTML = "";
-        haiku().forEach((line, index) => {
+        haiku(displayDistance, displayIsPutt).forEach((line, index) => {
           const d = document.createElement("div");
           d.className = "line" + (index === 2 ? " shedLine" : "");
           d.innerText = line;
