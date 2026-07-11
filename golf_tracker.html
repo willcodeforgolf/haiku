@@ -260,6 +260,14 @@
       .clearLink:hover {
         color: var(--text);
       }
+      .clearButton {
+        padding: 6px 8px;
+        border: 0;
+        background: transparent;
+        color: var(--muted);
+        text-decoration: underline;
+        border-radius: 6px;
+      }
       .empty {
         color: var(--muted);
         text-align: center;
@@ -571,10 +579,6 @@
         </div>
       </div>
 
-      <div class="card">
-        <div class="title" id="title">A.T.T.A.C.H —</div>
-      </div>
-
       <div class="card" id="haiku"></div>
 
       <div class="card hidden" id="distancePopoverCard">
@@ -629,7 +633,7 @@
         <div class="logTitle" id="logTitle">SHOT LOG (0 shots)</div>
         <div id="log"><div class="empty">No shots logged yet.</div></div>
         <div class="logFooter">
-          <a id="clearLink" class="clearLink">Clear and start over</a>
+          <button id="clearLink" class="clearLink clearButton" type="button">Clear and start over</button>
         </div>
       </div>
     </div>
@@ -828,6 +832,7 @@
       let db;
       let last = null;
       let shots = [];
+      let roundClearedToday = false;
       let nextHaikuDistance = 0;
       let distancePopoverOpen = false;
       let draftDistanceInput = "";
@@ -979,12 +984,35 @@
         return clubName || "—";
       }
 
+      function friendlyClubName(clubName, isPutt = false) {
+        if (isPutt || clubName === "P") return "P";
+        const names = {
+          D: "D",
+          "3": "3",
+          H: "H",
+          "4": "4",
+          "5": "5",
+          "6": "6",
+          "7": "7",
+          "8": "8",
+          "9": "9",
+          P: "W",
+          G: "G",
+          S: "S",
+          L: "L",
+        };
+        return names[clubName] || clubName || "—";
+      }
+
       function haiku(distance, isPutt = false) {
         const cadence = swingCadence(distance, isPutt);
+        const play = adjustedYards(distance);
+        const clubToken = isPutt ? "P" : club(play);
+        const clubName = friendlyClubName(clubToken, isPutt);
         return [
-          "Club² → . Breathe",
-          "Ease left foot, then right. Forward",
-          `Steps ${cadence}`,
+          "Air. Ground. Next Distance.",
+          `Clutch ${clubName} → Address. Inhale.`,
+          `Exhale. 1 2 3`,
         ];
       }
 
@@ -1074,7 +1102,7 @@
         return `${LOCAL_PREFIX}-settings-${getDeviceId()}`;
       }
       function roundState() {
-        return { last, shots };
+        return { last, shots, roundClearedToday };
       }
       function settingsState() {
         return {
@@ -1484,11 +1512,12 @@
 
       function renderHaiku(triggerShedPulse = false) {
         syncNextDistanceFromContext();
-        const fallbackDistance = resolvedNextHaikuDistance();
+        const fallbackDistance = roundClearedToday
+          ? 0
+          : resolvedNextHaikuDistance();
         const projected = currentProjected();
-        const displayDistance = distancePopoverOpen
-          ? clampDistance(Number(distanceInputDisplay())) || 0
-          : last && Number.isFinite(Number(last.yards))
+        const displayDistance =
+          last && Number.isFinite(Number(last.yards))
             ? clampDistance(Number(last.yards))
             : fallbackDistance;
         const hasDisplayDistance = Number.isFinite(displayDistance) && displayDistance > 0;
@@ -1498,27 +1527,22 @@
 
         document.getElementById("holeShotPill").innerText =
           `Hole ${projected.hole} • Shot ${projected.shot}`;
-        const selectedClub = titleClubToken(displayClub, displayIsPutt);
-        const cadence = swingCadence(displayDistance, displayIsPutt);
-        const titleFocus = !hasDisplayDistance
-          ? "Attached"
-          : displayIsPutt
-            ? `Attached ${selectedClub}, ${cadence}`
-            : `Attached (${selectedClub}), ${cadence}`;
-        document.getElementById("title").innerText = titleFocus;
-
         const h = document.getElementById("haiku");
         h.innerHTML = "";
         haiku(displayDistance, displayIsPutt).forEach((line, index) => {
           const d = document.createElement("div");
           d.className = "line" + (index === 2 ? " shedLine" : "");
-          d.innerText = line;
-          if (index === 2) {
+          if (index === 0) {
+            d.innerHTML = 'Air. Ground. <span class="distanceValue">Next Distance.</span>';
+          } else {
+            d.innerText = line;
+          }
+          if (index === 0) {
             d.classList.add("distanceLine");
             d.dataset.distanceTrigger = "true";
             d.setAttribute("role", "button");
             d.setAttribute("tabindex", "0");
-            d.setAttribute("title", "Tap to set next shot distance");
+            d.setAttribute("title", "Tap Next Distance to set the next shot distance");
           }
           if (index === 2 && triggerShedPulse) {
             d.classList.add("shedPulse");
@@ -1564,6 +1588,7 @@
       function commit(yards) {
         const y = clampDistance(yards);
         if (!y) return;
+        roundClearedToday = false;
         const pos = nextPosition(y);
         const isPutt = y <= 10;
         const newShot = makeShot(
@@ -1583,26 +1608,44 @@
         saveAll();
       }
 
-      async function clearAndStartOver() {
-        const ok = confirm(
-          "Start over and clear today's round on this device?",
-        );
-        if (!ok) return;
+      function clearAndStartOver(event) {
+        if (event) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+
         last = null;
         shots = [];
+        roundClearedToday = true;
         nextHaikuDistance = 0;
         distancePopoverOpen = false;
         draftDistanceInput = "";
-        syncNextDistanceFromContext(true);
+
         renderCourseMemory();
         renderHaiku();
+
         try {
-          await deleteTodayFromIndexedDB();
           localStorage.removeItem(localRoundKey());
+          localStorage.setItem(
+            localRoundKey(),
+            JSON.stringify({
+              last: null,
+              shots: [],
+              roundClearedToday: true,
+            }),
+          );
         } catch (e) {
-          console.error(e);
+          console.error("Local reset failed", e);
         }
-        pulseSaved();
+
+        try {
+          deleteTodayFromIndexedDB().finally(() => saveToIndexedDB());
+        } catch (e) {
+          console.error("IndexedDB reset failed", e);
+        }
+
+        const saved = document.getElementById("savedText");
+        if (saved) saved.innerText = "Round cleared ✓";
       }
 
       function normalizeUrl(value) {
@@ -1713,7 +1756,9 @@
       }
 
       // events
-      document.getElementById("clearLink").onclick = clearAndStartOver;
+      document
+        .getElementById("clearLink")
+        .addEventListener("click", clearAndStartOver);
       document.getElementById("tabHaiku").onclick = () => setActiveTab("haiku");
       document.getElementById("tabLive").onclick = () => setActiveTab("live");
       document.getElementById("weatherBtn").onclick = openWeatherModal;
@@ -1825,6 +1870,7 @@
         if (local.round) {
           last = local.round.last || null;
           shots = Array.isArray(local.round.shots) ? local.round.shots : [];
+          roundClearedToday = !!local.round.roundClearedToday;
         }
         if (local.settings) {
           activeTab = local.settings.activeTab || "haiku";
@@ -1856,6 +1902,7 @@
             shots = Array.isArray(roundRec.state.shots)
               ? roundRec.state.shots
               : shots;
+            roundClearedToday = !!roundRec.state.roundClearedToday;
           }
           const settingsRec = await loadSettingsFromIndexedDB();
           if (settingsRec && settingsRec.state) {
@@ -1884,7 +1931,7 @@
         }
 
         recoverShotsFromLastIfNeeded();
-        ensureOpeningShotFromMarkdown();
+        if (!roundClearedToday) ensureOpeningShotFromMarkdown();
         recomputeShots();
         if (!clampDistance(nextHaikuDistance)) {
           syncNextDistanceFromContext(true);
